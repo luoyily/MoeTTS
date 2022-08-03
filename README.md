@@ -13,7 +13,7 @@ Tacotron2: https://github.com/NVIDIA/tacotron2
 
 ## 使用方法
 
-![软件界面](assets\start.png)
+![软件界面](assets/start.png)
 
 打开软件后，分别选择您的模型路径与输出目录，最后输入待合成文本，点击`合成语音`等待一会软件会将音频输出到`输出目录/outpus.wav`
 
@@ -26,7 +26,7 @@ Tacotron2: https://github.com/NVIDIA/tacotron2
 
 示例：
 
-![示例](assets\example.png)
+![示例](assets/example.png)
 
 ## 模型下载
 
