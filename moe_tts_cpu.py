@@ -9,6 +9,11 @@ from matplotlib.figure import Figure
 from matplotlib.colors import LinearSegmentedColormap
 
 is_init_model= False
+cleaner_name = 'no_cleaners'
+
+def set_cleaner(name):
+    global cleaner_name
+    cleaner_name = name
 
 def file_locate(entry_box):
     global is_init_model
@@ -31,7 +36,7 @@ def inference(tts_model, hifigan_model, target_text, output):
     def synthesis():
         global label_img, img
         text = target_text
-        sequence = np.array(text_to_sequence(text, ['basic_cleaners']))[None, :]
+        sequence = np.array(text_to_sequence(text, [cleaner_name]))[None, :]
         sequence = torch.autograd.Variable(torch.from_numpy(sequence)).cpu().long()
 
         mel_outputs, mel_outputs_postnet, _, alignments = model.inference(sequence)
@@ -64,7 +69,7 @@ def inference(tts_model, hifigan_model, target_text, output):
         im = Image.fromarray(rgba)
         img = ImageTk.PhotoImage(im)
         label_img = ttk.Label(root, image=img)
-        label_img.grid(row=5, column=2, padx=0, pady=5)
+        label_img.grid(row=5, column=2, padx=0, pady=(40,5))
 
         from scipy.io.wavfile import write
         with torch.no_grad():
@@ -130,21 +135,21 @@ def inference(tts_model, hifigan_model, target_text, output):
     
 
 root = tk.Tk()
-root.geometry("720x400")
+root.geometry("720x420")
 root.title('MoeTTS-CPU')
 root.iconbitmap('./favicon.ico')
 style = ttk.Style("minty")
 
 # Tacotron2 model path select
 tts_mp_label = ttk.Label(text='Tacotron2 模型：')
-tts_mp_label.grid(row=1, column=1, padx=(20, 5), pady=5)
+tts_mp_label.grid(row=1, column=1, padx=(20, 5), pady=(15,5))
 
 
 tts_mp = ttk.Entry()
-tts_mp.grid(row=1, column=2, padx=10, pady=5, ipadx=130)
+tts_mp.grid(row=1, column=2, padx=20, pady=(15, 5), ipadx=130)
 
 tts_mp_btn = ttk.Button(root, text="浏览文件", bootstyle=(INFO, OUTLINE), command=lambda :file_locate(tts_mp))
-tts_mp_btn.grid(row=1, column=3, padx=5, pady=5)
+tts_mp_btn.grid(row=1, column=3, padx=5, pady=(15, 5))
 
 # hifigan model path select
 hg_mp_label = ttk.Label(text='HifiGAN 模型：')
@@ -152,7 +157,7 @@ hg_mp_label.grid(row=2, column=1, padx=(20, 5), pady=5)
 
 
 hg_mp = ttk.Entry()
-hg_mp.grid(row=2, column=2, padx=10, pady=5, ipadx=130)
+hg_mp.grid(row=2, column=2, padx=20, pady=5, ipadx=130)
 
 hg_mp_btn = ttk.Button(root, text="浏览文件", bootstyle=(INFO, OUTLINE), command=lambda :file_locate(hg_mp))
 hg_mp_btn.grid(row=2, column=3, padx=5, pady=5)
@@ -163,7 +168,7 @@ out_label.grid(row=3, column=1, padx=(20, 5), pady=5)
 
 
 out = ttk.Entry()
-out.grid(row=3, column=2, padx=10, pady=5, ipadx=130)
+out.grid(row=3, column=2, padx=20, pady=5, ipadx=130)
 
 out_btn = ttk.Button(root, text="浏览目录", bootstyle=(INFO, OUTLINE), command=lambda :directory_locate(out))
 out_btn.grid(row=3, column=3, padx=5, pady=5)
@@ -174,19 +179,34 @@ text_label.grid(row=4, column=1, padx=(20, 5), pady=5)
 
 # def test():
 #     global label_img, img
+#     print(cleaner_name)
 #     img = ImageTk.PhotoImage(Image.open('test.png'))
 #     label_img = ttk.Label(image=img)
-#     label_img.grid(row=5, column=2, padx=0, pady=5)
+#     label_img.grid(row=5, column=2, padx=0, pady=(40,5))
 
 target_text = ttk.Entry()
-target_text.grid(row=4, column=2, padx=10, pady=5, ipadx=130)
+target_text.grid(row=4, column=2, padx=20, pady=5, ipadx=130)
 text_btn = ttk.Button(root, text="合成语音", bootstyle=(SECONDARY, OUTLINE), 
     command=lambda :inference(tts_mp.get(), hg_mp.get(), target_text.get(), out.get()))
     #lambda :inference(tts_mp.get(), hg_mp.get(), target_text.get(), out.get())
 text_btn.grid(row=4, column=3, padx=5, pady=5)
 
+# radio button for cleaners
+
+text_label = ttk.Label(text='Cleaners:')
+text_label.place(x=35, y=180)
+radio1 = ttk.Radiobutton(root, text="no cleaner", value=1, command=lambda:set_cleaner('no_cleaners'))
+radio1.place(x=150, y=180)
+radio2 = ttk.Radiobutton(root, text="basic cleaner", value=2, command=lambda:set_cleaner('basic_cleaners'))
+radio2.place(x=260, y=180)
+radio3 = ttk.Radiobutton(root, text="trans cleaner", value=3, command=lambda:set_cleaner('transliteration_cleaners'))
+radio3.place(x=370, y=180)
+radio4 = ttk.Radiobutton(root, text="en cleaner", value=4, command=lambda:set_cleaner('english_cleaners'))
+radio4.place(x=480, y=180)
 # Draw result
 res_label = ttk.Label(text='Mel out:')
-res_label.grid(row=5, column=1, padx=5, pady=5)
-
+res_label.grid(row=5, column=1, padx=5, pady=(100,5))
+root.resizable(0,0)
 root.mainloop()
+# compile
+# pyinstaller -i favicon.ico --noconsole 

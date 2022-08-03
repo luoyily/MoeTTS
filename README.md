@@ -15,7 +15,7 @@ Tacotron2: https://github.com/NVIDIA/tacotron2
 
 ![软件界面](assets/start.png)
 
-打开软件后，分别选择您的模型路径与输出目录，最后输入待合成文本，点击`合成语音`等待一会软件会将音频输出到`输出目录/outpus.wav`
+打开软件后，分别选择您的模型路径与输出目录，选择Cleaners（看模型作者要求选），最后输入待合成文本，点击`合成语音`等待一会软件会将音频输出到`输出目录/outpus.wav`
 
 注意事项：
 
@@ -36,6 +36,8 @@ x. 模型名
 
 描述：角色xxx的模型
 
+模型输入：
+
 下载地址：
 
 配套Hifigan模型下载：选填
@@ -48,10 +50,12 @@ x. 模型名
 
    描述：游戏 ATRI- My dear moments 的角色ATRI模型
 
+   模型输入：无空格罗马音，标点可保留英文逗号句号。Cleaners选择basic_cleaners。例如：`tozendesu.koseinodesukara.`
+
    下载地址：链接：https://pan.baidu.com/s/1hJIbIX0r1UpI3UEtsp-6EA?pwd=jdi4 提取码：jdi4
 
    配套HifiGAN模型下载：链接：https://pan.baidu.com/s/1PGU8XEs5wy4ppJL6GjTgMQ?pwd=24g8 提取码：24g8
-
+   
    详细信息：从游戏中选择1300条语音训练，训练约600 Epoch
 
 ## 常见QA
