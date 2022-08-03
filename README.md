@@ -54,6 +54,23 @@ x. 模型名
 
    详细信息：从游戏中选择1300条语音训练，训练约600 Epoch
 
+## 常见QA
+
+1. Q：这个GUI能使用非官方Tacotron2训练的模型吗？
+
+   A：如果模型结构与推理方式没改过的话，只是数据处理不同，应该是没问题的。
+
+2. Q：文本该输入什么？
+
+   A：文本一般是输入音素（日语在这里应该输入罗马音），但具体要看模型训练者的数据是怎么输入的。比如我的ATRI模型是输入无空格罗马音，标点符号只支持逗号句号。
+
+   文本（text）会被直接送到这里经过basic_cleaners然后转为序列用于推理，如果你使用的模型训练者做了其他预处理，请把预处理结果输入进去。
+
+   ```python
+   sequence = np.array(text_to_sequence(text, ['basic_cleaners']))[None, :]
+   sequence = torch.autograd.Variable(torch.from_numpy(sequence)).cpu().long()
+   ```
+
    
 
 ## 分享模型&参与开发
