@@ -5,28 +5,26 @@ Speech synthesis model repo for galgame characters based on Tacotron2 and Hifiga
 
 ## 关于
 
-这个是一个用于存放基于Tacotron2与Hifigan的galgame角色语音合成模型库。另外也用于发行编译后的推理GUI。
+这个是一个用于存放基于Tacotron2与Hifigan的galgame角色语音合成模型库.
 
 hifi-gan: https://github.com/jik876/hifi-gan
 
 Tacotron2: https://github.com/NVIDIA/tacotron2
 
-## 使用方法
-
-![软件界面](assets/start.png)
-
-打开软件后，分别选择您的模型路径与输出目录，选择Cleaners（看模型作者要求选），最后输入待合成文本，点击`合成语音`等待一会软件会将音频输出到`输出目录/outpus.wav`
-
-注意事项：
-
- 1. 首次合成需要加载模型，耗时较长，相同模型再次合成不会再次加载，直接合成。
- 2. 如果切换模型，再次合成会重新加载。
- 3. Hifigan的config.json需要放置在与模型同路径下。
- 4. 软件为64位版本，不支持32位系统。
+##  参数说明
+- use_cuda: 是否使用GPU加速，默认cpu  
+- tacotron2_checkpoint: tacotron2模型的保存路径  
+- hifi_gan_checkpoint: hifi-gan的保存路径  
+- hifi_gan_config: hifi-gan的配置文件路径  
+- input_text: 待转换的文本  
+- output: 语音输出路径
+- cleaners: 数据预处理的方法，默认是no_cleaners,根据模型数据预处理灵活选择  
 
 示例：
 
-![示例](assets/example.png)
+```python3
+python3 main.py main.py --tacotron2_checkpoint .\models\atri_v2_40000.pt --hifi_gan_checkpoint .\models\g_atri_hifigan_02510000.pt --hifi_gan_config .\models\config.json --input_text tozendesu.koseinodesukara. --output .\output --cleaners basic_cleaners
+```
 
 ## 模型下载
 
@@ -60,7 +58,7 @@ x. 模型名
 
 ## 常见QA
 
-1. Q：这个GUI能使用非官方Tacotron2训练的模型吗？
+1. Q：能使用非官方Tacotron2训练的模型吗？
 
    A：如果模型结构与推理方式没改过的话，只是数据处理不同，应该是没问题的。
 

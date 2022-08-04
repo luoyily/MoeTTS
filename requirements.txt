@@ -1,0 +1,8 @@
+# if in cn, use http://mirrors.aliyun.com/pypi/simple/ 
+# tensorflow-cpu==1.15.0
+numpy==1.13.3
+inflect==0.2.5
+librosa==0.6.0
+scipy==1.0.0
+Unidecode==1.0.22
+pillow
