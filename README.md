@@ -23,7 +23,7 @@ Tacotron2: https://github.com/NVIDIA/tacotron2
 示例：
 
 ```python3
-python3 main.py main.py --tacotron2_checkpoint .\models\atri_v2_40000.pt --hifi_gan_checkpoint .\models\g_atri_hifigan_02510000.pt --hifi_gan_config .\models\config.json --input_text tozendesu.koseinodesukara. --output .\output --cleaners basic_cleaners
+python3 main.py --tacotron2_checkpoint .\models\atri_v2_40000.pt --hifi_gan_checkpoint .\models\g_atri_hifigan_02510000.pt --hifi_gan_config .\models\config.json --input_text tozendesu.koseinodesukara. --output .\output --cleaners basic_cleaners
 ```
 
 ## 模型下载
