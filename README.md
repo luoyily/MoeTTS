@@ -1,11 +1,11 @@
 # MoeTTS
-Speech synthesis model repo for galgame characters based on Tacotron2 and Hifigan
+Speech synthesis model repo for galgame characters based on Tacotron2 and Hifigan. The repo is also used to publish precompiled GUI.
 
 简体中文   English(Todo..)
 
-## 关于
+## About
 
-这个是一个用于存放基于Tacotron2与Hifigan的galgame角色语音合成模型库。另外也用于发行编译后的推理GUI。
+这是一个存放基于Tacotron2与Hifigan的galgame角色语音合成的模型库的仓库。另外也用于发行编译后的推理GUI。
 
 hifi-gan: https://github.com/jik876/hifi-gan
 
