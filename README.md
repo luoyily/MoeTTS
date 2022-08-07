@@ -1,7 +1,7 @@
 # MoeTTS
 Speech synthesis model repo for galgame characters based on Tacotron2 and Hifigan. The repo is also used to publish precompiled GUI.
 
-简体中文   English(Todo..)
+[简体中文](README.md)   [English](README_en.md)
 
 ## About
 
