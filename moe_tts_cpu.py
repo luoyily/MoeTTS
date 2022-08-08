@@ -5,6 +5,7 @@ from tkinter import filedialog
 
 import os
 import sys
+from cutlet import Cutlet
 
 from PIL import Image, ImageTk
 from matplotlib.backends.backend_agg import FigureCanvasAgg
@@ -15,6 +16,9 @@ from scipy.io.wavfile import write
 import logging
 numba_logger = logging.getLogger('numba')
 numba_logger.setLevel(logging.WARNING)
+
+# init cutlet
+cutlet = Cutlet("kunrei")
 
 # functions
 
@@ -40,7 +44,8 @@ def inference_taco(tts_model, hifigan_model, target_text, output):
     global is_init_model, model, generator, np, torch, text_to_sequence, json
     def synthesis():
         global label_img, img
-        text = target_text
+        text = cutlet.romaji(target_text).replace(" ","")
+        text = text if text.endswith(".") else text+"."
         sequence = np.array(text_to_sequence(text, ['custom_cleaners']))[None, :]
         sequence = torch.autograd.Variable(torch.from_numpy(sequence)).cpu().long()
 
