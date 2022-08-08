@@ -1,4 +1,3 @@
-# if in cn, use http://mirrors.aliyun.com/pypi/simple/
 # pip install -i http://mirrors.aliyun.com/pypi/simple/ tensorflow-cpu==1.15 --trusted-host  mirrors.aliyun.com
 # tensorflow 1.x  support python version <= 3.7
 numpy==1.21
