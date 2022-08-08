@@ -13,3 +13,5 @@ pillow
 torch
 matplotlib
 tqdm
+cutlet
+unidic-lite
