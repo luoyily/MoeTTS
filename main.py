@@ -71,8 +71,8 @@ def text_to_speech(tacotron2_model: Any, hifi_gan_generator: Any, input_text: st
     cut = cutlet.Cutlet("kunrei")
     with torch.no_grad():
         for idx, text in enumerate(input_text, start=1):
-            romaji = cut.romaji(text)
-            romaji = romaji if not romaji.endswith(".") else romaji+"."
+            romaji = cut.romaji(text).replace(" "."")
+            romaji = romaji if romaji.endswith(".") else romaji+"."
             sequence = np.array(text_to_sequence(romaji, [cleaners]))[None, :]
             sequence = torch.autograd.Variable(torch.from_numpy(sequence)).cpu().long() if device == "cpu" else torch.autograd.Variable(torch.from_numpy(sequence)).cuda().long()
 

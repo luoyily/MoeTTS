@@ -90,13 +90,9 @@ x. 模型名
 
 ## 常见QA
 
-1. Q：这个GUI能使用非官方Tacotron2或VITS训练的模型吗？
+1. Q：能使用非官方Tacotron2或VITS训练的模型吗？
 
    A：如果模型结构与推理方式没改过的话，只是数据处理不同，应该是没问题的。
-
-2. Q：是否有命令行版本或HttpApi？
-
-   A：考虑到CLI与HttpApi容易遭到滥用，暂时延期开发。（1.0.0版本由用户**[ShiroDoMain](https://github.com/ShiroDoMain)**制作了CLI版本，需要可到cli分支获取）
 
 3. Q：如何获得完整代码？
 
