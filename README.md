@@ -24,7 +24,8 @@ VITS:https://github.com/jaywalnut310/vits
 
 ### 模型目录格式
 
-单模型可以放在任意位置，如果模型带有配置文件，请将它重命名为`config.json`并与TTS模型放置在同一目录。（例如hifigan，vits模型，它们是带有配置文件的）
+1. 单模型可以放在任意位置，如果模型带有配置文件，请将它重命名为`config.json`并与TTS模型放置在同一目录。（例如hifigan，vits模型，它们是带有配置文件的）
+2. **VITS模型请将`config.json`中的cleaners 改为`custom_cleaners`**
 
 ### 文本输入格式
 
@@ -34,10 +35,10 @@ VITS:https://github.com/jaywalnut310/vits
 
 你可以在与`moetts.exe`同级的目录下找到`custom`文件夹，这里面存放了两种模型的文本模块。
 
-1. 自定义cleaner：找到`cleaners.py`并修改`custom_cleaners`函数即可（软件默认不对文本做处理）
+1. 自定义cleaner：找到`cleaners.py`并修改`custom_cleaners`函数即可（软件默认只会移除不在symbols中的字符，不对文本做进一步处理）
 2. 自定义symbols：找到`symbols.py`，将里面的符号为你需要的符号
 
-注意：不同模型可能使用不同的cleaners与symbols训练，有需要请修改他们，保证模型能正常使用。
+**注意：不同模型可能使用不同的cleaners与symbols训练，有需要请修改他们，保证模型能正常使用。**
 
 ### GUI使用方法
 
@@ -58,7 +59,7 @@ VITS特殊说明
 
 1. VITS-Single，VITS-Multi分别为单角色模型与多角色模型
 2. VITS-Multi中的原角色ID即待合成语音的角色ID，需要填入数字，目标角色ID为语音迁移功能的待迁移目标角色ID。
-3. 待迁移音频需要22050的采样率。
+3. **待迁移音频需要22050的采样率。**
 
 ## 模型下载
 
@@ -121,6 +122,8 @@ x. 模型名
 欢迎分享你的预训练模型，由于模型较大，暂时不打算存放在GitHub，可以拉取该项目后将你的模型下载地址以及信息写在Readme的模型下载部分中。提交PR即可。
 
 如果有任何优化建议或者BUG可以提issue。
+
+如您希望为项目追加新功能并合并到dev分支，请先查看Projects页面，避免PR冲突。
 
 ## 感谢名单&项目贡献者
 
