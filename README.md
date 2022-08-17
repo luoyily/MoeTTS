@@ -59,7 +59,7 @@ VITS特殊说明
 
 1. VITS-Single，VITS-Multi分别为单角色模型与多角色模型
 2. VITS-Multi中的原角色ID即待合成语音的角色ID，需要填入数字，目标角色ID为语音迁移功能的待迁移目标角色ID。
-3. **待迁移音频需要22050的采样率。**
+3. **待迁移音频需要22050的采样率，16位，单声道。**
 
 ## 模型下载
 
@@ -94,6 +94,18 @@ x. 模型名
    详细信息：从游戏中选择1300条语音训练，训练约600 Epoch，训练时罗马音使用Bing翻译API
    
    模型类型：Tacotron2+Hifigan
+
+2. ATRI-VITS
+
+   描述：游戏 ATRI- My dear moments 的角色ATRI模型
+
+   模型输入：带有分词与调形标注的罗马音，标点符号可使用`,.?!`，工具箱版本带有此转换功能。
+
+   下载地址：链接：https://pan.baidu.com/s/1ThJPo4b7X9j5C4Ap3YFWEQ?pwd=yl7o  提取码：yl7o
+
+   详细信息：使用VITS训练约 900 Epoch。
+
+   模型类型：VITS
 
 ## 常见QA
 
