@@ -107,6 +107,22 @@ x. 模型名
 
    模型类型：VITS
 
+3. Galgame 13位角色
+
+   描述：来自多个galgame的13位角色的模型
+
+   模型输入：带有分词与调形标注的罗马音，标点符号可使用`,.?!`，工具箱版本带有此转换功能。
+
+   下载地址：链接：https://pan.baidu.com/s/12giI1MpQWu_-KnhfQLV9nw?pwd=wc8u 提取码：wc8u
+
+   详细信息：
+
+   ​	角色表：0 杏璃 1 杏铃 2 Apeiria 3 明日香 4 ATRI 5 艾拉 6 彩音 7 星奏 8 由依 9 冰织 10 真白 11 美绘瑠 12 二阶堂真红
+
+   ​	此版本为VITS训练200 Epoch（该模型仍在训练，如果您的二次创作中有更高质量的语音使用需求，可以联系作者(https://space.bilibili.com/228292951)实时获取更高Epoch的版本）
+
+   模型类型：VITS多角色
+
 ## 常见QA
 
 1. Q：这个GUI能使用非官方Tacotron2或VITS训练的模型吗？
