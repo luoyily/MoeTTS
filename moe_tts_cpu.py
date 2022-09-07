@@ -16,6 +16,7 @@ from matplotlib.colors import LinearSegmentedColormap
 from scipy.io.wavfile import write
 
 import g2p.jp.japanese_g2p as jp_g2p
+import g2p.zh.chinese_g2p as zh_g2p
 
 import logging
 numba_logger = logging.getLogger('numba')
@@ -24,6 +25,10 @@ numba_logger.setLevel(logging.WARNING)
 # functions
 
 is_init_model= False
+# Settings
+enable_batch_out = False
+enable_custom_filename = False
+vits_length_scale = 1
 
 def file_locate(entry_box, reset_model=False):
     global is_init_model
@@ -41,6 +46,24 @@ def directory_locate(entry_box):
     entry_box.insert(0, dire)
     print(dire)
 
+def save_file_locate(entry_box):
+    file = filedialog.asksaveasfilename(initialdir=os.getcwd(), filetypes=[('wav 音频文件', '.wav')])
+    entry_box.delete(0, 'end')
+    entry_box.insert(0, file)
+    print(file)
+
+def save_locate(entry_box):
+    if enable_custom_filename and not enable_batch_out:
+        save_file_locate(entry_box)
+    else:
+        directory_locate(entry_box)
+
+def set_vits_length_scale(value):
+    global vits_length_scale
+    
+    vits_length_scale = float(value)
+    print('设定语速：', vits_length_scale)
+
 # text to sequence
 taco_default_symbols = ["_", "-", "!", "'", "(", ")", ",", ".", ":", ";", "?", " ", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "@AA", "@AA0", "@AA1", "@AA2", "@AE", "@AE0", "@AE1", "@AE2", "@AH", "@AH0", "@AH1", "@AH2", "@AO", "@AO0", "@AO1", "@AO2", "@AW", "@AW0", "@AW1", "@AW2", "@AY", "@AY0", "@AY1", "@AY2", "@B", "@CH", "@D", "@DH", "@EH", "@EH0", "@EH1", "@EH2", "@ER", "@ER0", "@ER1", "@ER2", "@EY", "@EY0", "@EY1", "@EY2", "@F", "@G", "@HH", "@IH", "@IH0", "@IH1", "@IH2", "@IY", "@IY0", "@IY1", "@IY2", "@JH", "@K", "@L", "@M", "@N", "@NG", "@OW", "@OW0", "@OW1", "@OW2", "@OY", "@OY0", "@OY1", "@OY2", "@P", "@R", "@S", "@SH", "@T", "@TH", "@UH", "@UH0", "@UH1", "@UH2", "@UW", "@UW0", "@UW1", "@UW2", "@V", "@W", "@Y", "@Z", "@ZH"]
 vits_default_symbols = ['_', ',', '.', '!', '?', '-', 'A', 'E', 'I', 'N', 'O', 'Q', 'U', 'a', 'b', 'd', 'e', 'f','g', 'h', 'i', 'j', 'k', 'm', 'n', 'o', 'p', 'r', 's', 't', 'u', 'v', 'w', 'y', 'z', 'ʃ', 'ʧ', '↓', '↑', ' ']
@@ -54,50 +77,60 @@ def text_to_sequence(text, symbols=None):
 def inference_taco(tts_model, hifigan_model, target_text, output):
     global is_init_model, model, generator, np, torch, symbols
     def synthesis():
-        global label_img, img
-        text = target_text
-        sequence = np.array(text_to_sequence(text, symbols))[None, :]
-        sequence = torch.autograd.Variable(torch.from_numpy(sequence)).cpu().long()
+        text_list = [target_text]
+        if enable_batch_out:
+            text_list = target_text.split('|')
+        for n, tar_text in enumerate(text_list):
+            global label_img, img
+            text = tar_text
+            sequence = np.array(text_to_sequence(text, symbols))[None, :]
+            sequence = torch.autograd.Variable(torch.from_numpy(sequence)).cpu().long()
 
-        mel_outputs, mel_outputs_postnet, _, alignments = model.inference(sequence)
-        # Draw mel out
-        fig = Figure(figsize=(5, 1.8), dpi=100)
-        canvas = FigureCanvasAgg(fig)
-        cmap = LinearSegmentedColormap.from_list('my_cmap', [(1, 1, 1), (161/255, 234/255, 251/255)], N=200)
-        # Do some plotting.
-        ax = fig.add_subplot(1, 2, 1)
-        ax.tick_params(labelsize=8)
-        ax.spines['top'].set_color('#F6F6F6')
-        ax.spines['bottom'].set_color('#F6F6F6')
-        ax.spines['left'].set_color('#F6F6F6')
-        ax.spines['right'].set_color('#F6F6F6')
-        ax.tick_params(axis='x',colors='#AAAAAA')
-        ax.tick_params(axis='y',colors='#AAAAAA')
-        ax.imshow(mel_outputs.float().data.cpu().numpy()[0], aspect='auto', origin='lower', interpolation='none', cmap=cmap)
-        ax = fig.add_subplot(1, 2, 2)
-        ax.tick_params(labelsize=8)
-        ax.spines['top'].set_color('#F6F6F6')
-        ax.spines['bottom'].set_color('#F6F6F6')
-        ax.spines['left'].set_color('#F6F6F6')
-        ax.spines['right'].set_color('#F6F6F6')
-        ax.tick_params(axis='x',colors='#AAAAAA')
-        ax.tick_params(axis='y',colors='#AAAAAA')
-        ax.imshow(alignments.float().data.cpu().numpy()[0].T, aspect='auto', origin='lower', interpolation='none',cmap=cmap)
-        canvas.draw()
-        rgba = np.asarray(canvas.buffer_rgba())
+            mel_outputs, mel_outputs_postnet, _, alignments = model.inference(sequence)
+            # Draw mel out
+            fig = Figure(figsize=(5, 1.8), dpi=100)
+            canvas = FigureCanvasAgg(fig)
+            cmap = LinearSegmentedColormap.from_list('my_cmap', [(1, 1, 1), (161/255, 234/255, 251/255)], N=200)
+            # Do some plotting.
+            ax = fig.add_subplot(1, 2, 1)
+            ax.tick_params(labelsize=8)
+            ax.spines['top'].set_color('#F6F6F6')
+            ax.spines['bottom'].set_color('#F6F6F6')
+            ax.spines['left'].set_color('#F6F6F6')
+            ax.spines['right'].set_color('#F6F6F6')
+            ax.tick_params(axis='x',colors='#AAAAAA')
+            ax.tick_params(axis='y',colors='#AAAAAA')
+            ax.imshow(mel_outputs.float().data.cpu().numpy()[0], aspect='auto', origin='lower', interpolation='none', cmap=cmap)
+            ax = fig.add_subplot(1, 2, 2)
+            ax.tick_params(labelsize=8)
+            ax.spines['top'].set_color('#F6F6F6')
+            ax.spines['bottom'].set_color('#F6F6F6')
+            ax.spines['left'].set_color('#F6F6F6')
+            ax.spines['right'].set_color('#F6F6F6')
+            ax.tick_params(axis='x',colors='#AAAAAA')
+            ax.tick_params(axis='y',colors='#AAAAAA')
+            ax.imshow(alignments.float().data.cpu().numpy()[0].T, aspect='auto', origin='lower', interpolation='none',cmap=cmap)
+            canvas.draw()
+            rgba = np.asarray(canvas.buffer_rgba())
 
-        im = Image.fromarray(rgba)
-        img = ImageTk.PhotoImage(im)
-        label_img = ttk.Label(taco_tab, image=img)
-        label_img.grid(row=5, column=2, padx=0, pady=5)
+            im = Image.fromarray(rgba)
+            img = ImageTk.PhotoImage(im)
+            label_img = ttk.Label(taco_tab, image=img)
+            label_img.grid(row=5, column=2, padx=0, pady=5)
 
-        
-        with torch.no_grad():
-            raw_audio = generator(mel_outputs.float())
-            audio = raw_audio.squeeze()
-            audio = audio * 32768.0
-            audio = audio.cpu().numpy().astype('int16')
-            write(os.path.join(output,'output.wav'), h.sampling_rate, audio)
+            
+            with torch.no_grad():
+                raw_audio = generator(mel_outputs.float())
+                audio = raw_audio.squeeze()
+                audio = audio * 32768.0
+                audio = audio.cpu().numpy().astype('int16')
+                if enable_custom_filename:
+                    write(os.path.join(output,'.wav'), h.sampling_rate, audio)
+                else:
+                    if enable_batch_out:
+                        write(os.path.join(output,f'output_{n}.wav'), h.sampling_rate, audio)
+                    else:
+                        write(os.path.join(output,'output.wav'), h.sampling_rate, audio)
 
     if not is_init_model:
         import numpy as np
@@ -170,15 +203,26 @@ def inference_vitss(tts_model, target_text, output):
     global hps, net_g, torch, SynthesizerTrn, symbols, text_to_sequence, commons
     global is_init_model
     def synthesis():
-        stn_tst = get_text(target_text, hps, symbols)
-        with torch.no_grad():
-            x_tst = stn_tst.cpu().unsqueeze(0)
-            x_tst_lengths = torch.LongTensor([stn_tst.size(0)]).cpu()
-            audio = net_g.infer(x_tst, x_tst_lengths, noise_scale=.667, noise_scale_w=0.8, length_scale=1)[0][0,0].data.cpu().float().numpy()
-            audio = audio * 32768.0
-            audio = audio.squeeze()
-            audio = audio.astype('int16')
-            write(os.path.join(output,'output_vitss.wav'), 22050, audio)
+        text_list = [target_text]
+        if enable_batch_out:
+            text_list = target_text.split('|')
+        for n, tar_text in enumerate(text_list):
+            stn_tst = get_text(tar_text, hps, symbols)
+            with torch.no_grad():
+                x_tst = stn_tst.cpu().unsqueeze(0)
+                x_tst_lengths = torch.LongTensor([stn_tst.size(0)]).cpu()
+                audio = net_g.infer(x_tst, x_tst_lengths, noise_scale=.667, noise_scale_w=0.8, length_scale=vits_length_scale)[0][0,0].data.cpu().float().numpy()
+                audio = audio * 32768.0
+                audio = audio.squeeze()
+                audio = audio.astype('int16')
+                if enable_custom_filename:
+                    write(os.path.join(output,'.wav'), 22050, audio)
+                else:
+                    if enable_batch_out:
+                        write(os.path.join(output,f'output_vitss_{n}.wav'), 22050, audio)
+                    else:
+                        write(os.path.join(output,'output_vitss.wav'), 22050, audio)
+            
     if not is_init_model:
         # init model
         import torch
@@ -239,19 +283,32 @@ def inference_vitsm(tts_model, target_text, output, speaker_id, mode='synthesis'
         audio = audio * 32768.0
         audio = audio.squeeze()
         audio = audio.astype('int16')
-        write(os.path.join(output,'output_convert.wav'), 22050, audio)
+        if enable_custom_filename:
+            write(os.path.join(output,'.wav'), 22050, audio)
+        else:
+            write(os.path.join(output,'output_convert.wav'), 22050, audio)
     
     def synthesis():
-        stn_tst = get_text(target_text, hps, symbols)
-        with torch.no_grad():
-            x_tst = stn_tst.cpu().unsqueeze(0)
-            x_tst_lengths = torch.LongTensor([stn_tst.size(0)]).cpu()
-            sid = torch.LongTensor([int(speaker_id)]).cpu()
-            audio = net_g.infer(x_tst, x_tst_lengths, sid=sid, noise_scale=.667, noise_scale_w=0.8, length_scale=1)[0][0,0].data.cpu().float().numpy()
-            audio = audio * 32768.0
-            audio = audio.squeeze()
-            audio = audio.astype('int16')
-            write(os.path.join(output,'output_vitsm.wav'), 22050, audio)
+        text_list = [target_text]
+        if enable_batch_out:
+            text_list = target_text.split('|')
+        for n, tar_text in enumerate(text_list):
+            stn_tst = get_text(tar_text, hps, symbols)
+            with torch.no_grad():
+                x_tst = stn_tst.cpu().unsqueeze(0)
+                x_tst_lengths = torch.LongTensor([stn_tst.size(0)]).cpu()
+                sid = torch.LongTensor([int(speaker_id)]).cpu()
+                audio = net_g.infer(x_tst, x_tst_lengths, sid=sid, noise_scale=.667, noise_scale_w=0.8, length_scale=vits_length_scale)[0][0,0].data.cpu().float().numpy()
+                audio = audio * 32768.0
+                audio = audio.squeeze()
+                audio = audio.astype('int16')
+                if enable_custom_filename:
+                    write(os.path.join(output,'.wav'), 22050, audio)
+                else:
+                    if enable_batch_out:
+                        write(os.path.join(output,f'output_vitsm_{n}.wav'), 22050, audio)
+                    else:
+                        write(os.path.join(output,'output_vitsm.wav'), 22050, audio)
     if not is_init_model:
         import torch
         import vits.commons as commons
@@ -347,7 +404,7 @@ taco_out_label.grid(row=3, column=1, padx=(20, 5), pady=5)
 taco_out = ttk.Entry(taco_tab)
 taco_out.grid(row=3, column=2, padx=20, pady=5, ipadx=taco_entry_ipadx)
 
-taco_out_btn = ttk.Button(taco_tab, text="浏览目录", bootstyle=(INFO, OUTLINE), command=lambda :directory_locate(taco_out))
+taco_out_btn = ttk.Button(taco_tab, text="浏览目录", bootstyle=(INFO, OUTLINE), command=lambda :save_locate(taco_out))
 taco_out_btn.grid(row=3, column=3, padx=5, pady=5)
 
 # text input
@@ -393,7 +450,7 @@ vitss_out_label.grid(row=2, column=1, padx=(20, 5), pady=5)
 vitss_out = ttk.Entry(vits_tab)
 vitss_out.grid(row=2, column=2, padx=20, pady=5, ipadx=taco_entry_ipadx)
 
-vitss_out_btn = ttk.Button(vits_tab, text="浏览目录", bootstyle=(INFO, OUTLINE), command=lambda :directory_locate(vitss_out))
+vitss_out_btn = ttk.Button(vits_tab, text="浏览目录", bootstyle=(INFO, OUTLINE), command=lambda :save_locate(vitss_out))
 vitss_out_btn.grid(row=2, column=3, padx=5, pady=5)
 
 # text input
@@ -428,7 +485,7 @@ vitsm_out_label.grid(row=2, column=1, padx=(20, 5), pady=5)
 vitsm_out = ttk.Entry(vits_tab_2)
 vitsm_out.grid(row=2, column=2, padx=20, pady=5, ipadx=taco_entry_ipadx)
 
-vitsm_out_btn = ttk.Button(vits_tab_2, text="浏览目录", bootstyle=(INFO, OUTLINE), command=lambda :directory_locate(vitsm_out))
+vitsm_out_btn = ttk.Button(vits_tab_2, text="浏览目录", bootstyle=(INFO, OUTLINE), command=lambda :save_locate(vitsm_out))
 vitsm_out_btn.grid(row=2, column=3, padx=5, pady=5)
 # speaker select
 src_speaker_label = ttk.Label(vits_tab_2, text='原角色ID：')
@@ -495,7 +552,7 @@ def set_jtalk_mode(mode):
     jtalk_mode = mode
 
 tool_tab = ttk.Frame(nb)
-
+# Japanese g2p
 jtalk_group = ttk.Labelframe(master=tool_tab, text="OpenJtalk g2p (base on CjangCjengh's jp_g2p tool):", padding=15)
 jtalk_group.pack(fill=BOTH, side=TOP, expand=True, ipadx=740, ipady=20)
 # nb.pack(side=LEFT, padx=0,pady=(10, 0),  expand=YES, fill=BOTH)
@@ -512,16 +569,129 @@ jtext_btn.grid(row=1, column=3, padx=5, pady=5)
 
 text_label = ttk.Label(jtalk_group, text='转换模式:')
 text_label.place(x=20, y=50)
-radio1 = ttk.Radiobutton(jtalk_group, text="普通转换", value=1, command=lambda:set_jtalk_mode('r'))
+j_radio_var = ttk.IntVar()
+radio1 = ttk.Radiobutton(jtalk_group, text="普通转换",variable=j_radio_var,  value=1, command=lambda:set_jtalk_mode('r'))
 radio1.place(x=150, y=50)
-radio2 = ttk.Radiobutton(jtalk_group, text="空格分词", value=2, command=lambda:set_jtalk_mode('rs'))
+radio2 = ttk.Radiobutton(jtalk_group, text="空格分词",variable=j_radio_var, value=2, command=lambda:set_jtalk_mode('rs'))
 radio2.place(x=260, y=50)
-radio3 = ttk.Radiobutton(jtalk_group, text="分词+调形", value=3, command=lambda:set_jtalk_mode('rsa'))
+radio3 = ttk.Radiobutton(jtalk_group, text="分词+调形",variable=j_radio_var, value=3, command=lambda:set_jtalk_mode('rsa'))
 radio3.place(x=370, y=50)
+
+# Chinese g2p
+pinyin_mode = 'normal'
+pinyin_space = False
+
+def py_g2p(text, entry_box):
+    entry_box.delete(0, 'end')
+    root.update()
+    res = zh_g2p.g2p(text, pinyin_mode, pinyin_space)
+    entry_box.delete(0, 'end')
+    entry_box.insert(0, res)
+
+def set_pinyin_mode(mode):
+    global pinyin_mode
+    pinyin_mode = mode
+
+def set_pinyin_space():
+    global pinyin_space
+    pinyin_space = ~pinyin_space
+
+pinyin_group = ttk.Labelframe(master=tool_tab, text="pypinyin g2p:", padding=15)
+pinyin_group.pack(fill=BOTH, side=TOP, expand=True, ipadx=740, ipady=20)
+pinyin_label = ttk.Label(pinyin_group, text='中文文本：')
+pinyin_label.grid(row=1, column=1, padx=(20, 5), pady=5)
+
+
+pinyin_text = ttk.Entry(pinyin_group)
+pinyin_text.grid(row=1, column=2, padx=20, pady=5, ipadx=170)
+
+pinyin_text_btn = ttk.Button(pinyin_group,  text="转换(g2p)", bootstyle=(INFO, OUTLINE), 
+    command=lambda :py_g2p(pinyin_text.get(), pinyin_text))
+pinyin_text_btn.grid(row=1, column=3, padx=5, pady=5)
+
+pinyin_text_label = ttk.Label(pinyin_group, text='转换模式:')
+pinyin_text_label.place(x=20, y=50)
+pinyin_radio_var = ttk.IntVar()
+pinyin_radio1 = ttk.Radiobutton(pinyin_group, text="普通转换",variable=pinyin_radio_var,  value=4, command=lambda:set_pinyin_mode('normal'))
+pinyin_radio1.place(x=150, y=50)
+pinyin_radio2 = ttk.Radiobutton(pinyin_group, text="数字声调",variable=pinyin_radio_var,  value=5, command=lambda:set_pinyin_mode('tone3'))
+pinyin_radio2.place(x=260, y=50)
+pinyin_radio3 = ttk.Radiobutton(pinyin_group, text="注音符号",variable=pinyin_radio_var,  value=6, command=lambda:set_pinyin_mode('bopomofo'))
+pinyin_radio3.place(x=370, y=50)
+pinyin_check1 = ttk.Checkbutton(pinyin_group, text='是否空格', command=lambda:set_pinyin_space())
+pinyin_check1.place(x=480, y=50)
+
+# Audio tools
+def audio_convert(audio_path, out_path):
+    os.system(f'ffmpeg -i {audio_path} -ac 1 -ar 22050 {out_path}')
+
+audio_group = ttk.Labelframe(master=tool_tab, text="音频转换(到22050 采样率,单声道wav)(依赖ffmepg):", padding=15)
+audio_group.pack(fill=BOTH, side=TOP, expand=True, ipadx=740, ipady=20)
+
+audio_label = ttk.Label(audio_group, text='待转换音频：')
+audio_label.grid(row=1, column=1, padx=(20, 5), pady=5)
+
+
+audio_path = ttk.Entry(audio_group)
+audio_path.grid(row=1, column=2, padx=20, pady=5, ipadx=170)
+
+audio_sel_btn = ttk.Button(audio_group,  text="浏览文件", bootstyle=(INFO, OUTLINE), 
+    command=lambda :file_locate(audio_path))
+audio_sel_btn.grid(row=1, column=3, padx=5, pady=5)
+
+audio_label2 = ttk.Label(audio_group, text='输出位置：')
+audio_label2.grid(row=2, column=1, padx=(20, 5), pady=5)
+
+
+audio_out = ttk.Entry(audio_group)
+audio_out.grid(row=2, column=2, padx=20, pady=5, ipadx=170)
+
+audio_out_btn = ttk.Button(audio_group,  text="浏览目录", bootstyle=(INFO, OUTLINE), 
+    command=lambda :save_file_locate(audio_out))
+audio_out_btn.grid(row=2, column=3, padx=5, pady=5)
+
+audio_out_btn2 = ttk.Button(audio_group,  text="   转 换   ", bootstyle=(INFO, OUTLINE), 
+    command=lambda :audio_convert(audio_path.get(), str(audio_out.get())+'.wav'))
+audio_out_btn2.grid(row=3, column=3, padx=5, pady=5)
+
+# settings tab
+def set_batch_mode():
+    global enable_batch_out 
+    enable_batch_out = ~enable_batch_out
+
+def set_custom_filename():
+    global enable_custom_filename 
+    enable_custom_filename = ~enable_custom_filename 
+
+setting_tab = ttk.Frame(nb)
+file_setting_group = ttk.Labelframe(master=setting_tab, text="文件设置:", padding=15)
+file_setting_group.pack(fill=BOTH, side=TOP, expand=True, ipadx=740, ipady=40)
+
+file_set_check1 = ttk.Checkbutton(file_setting_group, text='启用批量合成模式', command=lambda:set_batch_mode())
+file_set_check1.grid(row=1, column=1, padx=5, pady=5)
+file_set_check2 = ttk.Checkbutton(file_setting_group, text='启用自定义文件名', command=lambda:set_custom_filename())
+file_set_check2.grid(row=1, column=2, padx=5, pady=5)
+file_set_help = ttk.Label(file_setting_group, text='说明：启用批量合成模式后，文本框中以"|"分隔句子后，会批量转换每句到文件夹下以单独文件存放。\
+    \n批量转换模式无法自定义文件名。')
+file_set_help.place(x=20, y=50)
+
+# VITS inference settings
+vits_setting_group = ttk.Labelframe(master=setting_tab, text="VITS 语速设定(浮点数, 越大越慢):", padding=15)
+vits_setting_group.pack(fill=BOTH, side=TOP, expand=True, ipadx=740, ipady=20)
+
+vits_ls_label = ttk.Label(vits_setting_group, text='语速 (默认1.0)：')
+vits_ls_label.grid(row=1, column=1, padx=(20, 5), pady=5)
+# vits length scale
+vits_ls = ttk.Entry(vits_setting_group)
+vits_ls.grid(row=1, column=2, padx=(20, 5), pady=5)
+vits_ls_btn = ttk.Button(vits_setting_group,  text="设定", bootstyle=(INFO, OUTLINE), 
+    command=lambda :set_vits_length_scale(vits_ls.get()))
+vits_ls_btn.grid(row=1, column=3, padx=5, pady=5)
 
 nb.add(taco_tab, text="Tacotron2", sticky=NW)
 nb.add(vits_tab, text="VITS-Single", sticky=NW)
 nb.add(vits_tab_2, text="VITS-Multi", sticky=NW)
 nb.add(tool_tab, text="ToolBox", sticky=NW)
+nb.add(setting_tab, text="Settings", sticky=NW)
 root.resizable(0,0)
 root.mainloop()
