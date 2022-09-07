@@ -6,11 +6,16 @@ from tkinter import filedialog
 import os
 import sys
 
+import ctypes
+import json
+
 from PIL import Image, ImageTk
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 from matplotlib.figure import Figure
 from matplotlib.colors import LinearSegmentedColormap
 from scipy.io.wavfile import write
+
+import g2p.jp.japanese_g2p as jp_g2p
 
 import logging
 numba_logger = logging.getLogger('numba')
@@ -36,12 +41,22 @@ def directory_locate(entry_box):
     entry_box.insert(0, dire)
     print(dire)
 
+# text to sequence
+taco_default_symbols = ["_", "-", "!", "'", "(", ")", ",", ".", ":", ";", "?", " ", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "@AA", "@AA0", "@AA1", "@AA2", "@AE", "@AE0", "@AE1", "@AE2", "@AH", "@AH0", "@AH1", "@AH2", "@AO", "@AO0", "@AO1", "@AO2", "@AW", "@AW0", "@AW1", "@AW2", "@AY", "@AY0", "@AY1", "@AY2", "@B", "@CH", "@D", "@DH", "@EH", "@EH0", "@EH1", "@EH2", "@ER", "@ER0", "@ER1", "@ER2", "@EY", "@EY0", "@EY1", "@EY2", "@F", "@G", "@HH", "@IH", "@IH0", "@IH1", "@IH2", "@IY", "@IY0", "@IY1", "@IY2", "@JH", "@K", "@L", "@M", "@N", "@NG", "@OW", "@OW0", "@OW1", "@OW2", "@OY", "@OY0", "@OY1", "@OY2", "@P", "@R", "@S", "@SH", "@T", "@TH", "@UH", "@UH0", "@UH1", "@UH2", "@UW", "@UW0", "@UW1", "@UW2", "@V", "@W", "@Y", "@Z", "@ZH"]
+vits_default_symbols = ['_', ',', '.', '!', '?', '-', 'A', 'E', 'I', 'N', 'O', 'Q', 'U', 'a', 'b', 'd', 'e', 'f','g', 'h', 'i', 'j', 'k', 'm', 'n', 'o', 'p', 'r', 's', 't', 'u', 'v', 'w', 'y', 'z', 'ʃ', 'ʧ', '↓', '↑', ' ']
+
+
+def text_to_sequence(text, symbols=None):
+    _symbol_to_id = {s: i for i, s in enumerate(symbols)}
+    seq = [_symbol_to_id[c] for c in text if c in symbols]
+    return seq
+
 def inference_taco(tts_model, hifigan_model, target_text, output):
-    global is_init_model, model, generator, np, torch, text_to_sequence, json
+    global is_init_model, model, generator, np, torch, symbols
     def synthesis():
         global label_img, img
         text = target_text
-        sequence = np.array(text_to_sequence(text, ['custom_cleaners']))[None, :]
+        sequence = np.array(text_to_sequence(text, symbols))[None, :]
         sequence = torch.autograd.Variable(torch.from_numpy(sequence)).cpu().long()
 
         mel_outputs, mel_outputs_postnet, _, alignments = model.inference(sequence)
@@ -58,7 +73,7 @@ def inference_taco(tts_model, hifigan_model, target_text, output):
         ax.spines['right'].set_color('#F6F6F6')
         ax.tick_params(axis='x',colors='#AAAAAA')
         ax.tick_params(axis='y',colors='#AAAAAA')
-        ax.imshow(mel_outputs.float().data.cpu().numpy()[0], aspect='auto', origin='bottom', interpolation='none', cmap=cmap)
+        ax.imshow(mel_outputs.float().data.cpu().numpy()[0], aspect='auto', origin='lower', interpolation='none', cmap=cmap)
         ax = fig.add_subplot(1, 2, 2)
         ax.tick_params(labelsize=8)
         ax.spines['top'].set_color('#F6F6F6')
@@ -67,7 +82,7 @@ def inference_taco(tts_model, hifigan_model, target_text, output):
         ax.spines['right'].set_color('#F6F6F6')
         ax.tick_params(axis='x',colors='#AAAAAA')
         ax.tick_params(axis='y',colors='#AAAAAA')
-        ax.imshow(alignments.float().data.cpu().numpy()[0].T, aspect='auto', origin='bottom', interpolation='none',cmap=cmap)
+        ax.imshow(alignments.float().data.cpu().numpy()[0].T, aspect='auto', origin='lower', interpolation='none',cmap=cmap)
         canvas.draw()
         rgba = np.asarray(canvas.buffer_rgba())
 
@@ -88,11 +103,18 @@ def inference_taco(tts_model, hifigan_model, target_text, output):
         import numpy as np
         import torch
         from tacotron2.hparams import create_hparams
-
         from tacotron2.train import load_model
-        sys.path.append('./custom/')
-        from tacotext import text_to_sequence
+        # load symbols
+        symbols = taco_default_symbols
+        try:
+            print('Trying to load MoeTTS config...')
+            moe_cfg_taco = json.load(open(('/'.join(tts_model.split('/')[:-1]))+'/moetts.json', encoding='utf-8'))
+            symbols = moe_cfg_taco['symbols']
+        except:
+            print('Failed to load MoeTTS config, use default configuration.')
+
         hparams = create_hparams()
+        hparams.n_symbols=len(symbols)
         hparams.sampling_rate = 22050
 
         checkpoint_path = tts_model
@@ -100,8 +122,6 @@ def inference_taco(tts_model, hifigan_model, target_text, output):
         model = load_model(hparams)
         model.load_state_dict(torch.load(checkpoint_path, map_location='cpu')['state_dict'])
         _ = model.cpu().eval()
-
-        import json
        
         # sys.path.append('hifigan/')
         from hifigan.models import Generator
@@ -139,8 +159,8 @@ def inference_taco(tts_model, hifigan_model, target_text, output):
         synthesis()
 # vits
 
-def get_text(text, hps):
-    text_norm = text_to_sequence(text, hps.data.text_cleaners)
+def get_text(text, hps, symbols):
+    text_norm = text_to_sequence(text, symbols)
     if hps.data.add_blank:
         text_norm = commons.intersperse(text_norm, 0)
     text_norm = torch.LongTensor(text_norm)
@@ -150,7 +170,7 @@ def inference_vitss(tts_model, target_text, output):
     global hps, net_g, torch, SynthesizerTrn, symbols, text_to_sequence, commons
     global is_init_model
     def synthesis():
-        stn_tst = get_text(target_text, hps)
+        stn_tst = get_text(target_text, hps, symbols)
         with torch.no_grad():
             x_tst = stn_tst.cpu().unsqueeze(0)
             x_tst_lengths = torch.LongTensor([stn_tst.size(0)]).cpu()
@@ -165,9 +185,17 @@ def inference_vitss(tts_model, target_text, output):
         import vits.commons as commons
         import vits.utils
         from vits.models import SynthesizerTrn
-        sys.path.append('./custom/')
-        from vitstext.symbols import symbols
-        from vitstext import text_to_sequence
+        # sys.path.append('./custom/')
+        # from vitstext.symbols import symbols
+        # from vitstext import text_to_sequence
+        # load symbols
+        symbols = vits_default_symbols
+        try:
+            print('Trying to load MoeTTS config...')
+            moe_cfg_vits = json.load(open(('/'.join(tts_model.split('/')[:-1]))+'/moetts.json', encoding='utf-8'))
+            symbols = moe_cfg_vits['symbols']
+        except:
+            print('Failed to load MoeTTS config, use default configuration.')
         vitss_cfg = '/'.join(tts_model.split('/')[:-1])
         config_file = (vitss_cfg+'/config.json')
         hps = vits.utils.get_hparams_from_file(config_file)
@@ -214,7 +242,7 @@ def inference_vitsm(tts_model, target_text, output, speaker_id, mode='synthesis'
         write(os.path.join(output,'output_convert.wav'), 22050, audio)
     
     def synthesis():
-        stn_tst = get_text(target_text, hps)
+        stn_tst = get_text(target_text, hps, symbols)
         with torch.no_grad():
             x_tst = stn_tst.cpu().unsqueeze(0)
             x_tst_lengths = torch.LongTensor([stn_tst.size(0)]).cpu()
@@ -233,10 +261,18 @@ def inference_vitsm(tts_model, target_text, output, speaker_id, mode='synthesis'
         from vits.mel_processing import spectrogram_torch
         from vits.utils import load_wav_to_torch
 
-        sys.path.append('./custom/')
-        from vitstext.symbols import symbols
-        from vitstext import text_to_sequence
-        
+        # sys.path.append('./custom/')
+        # from vitstext.symbols import symbols
+        # from vitstext import text_to_sequence
+        symbols = vits_default_symbols
+        try:
+            print('Trying to load MoeTTS config...')
+            moe_cfg_vits = json.load(open(('/'.join(tts_model.split('/')[:-1]))+'/moetts.json', encoding='utf-8'))
+            symbols = moe_cfg_vits['symbols']
+            speakers = moe_cfg_vits['speakers']
+            print(f'Speakers:\n{speakers}')
+        except:
+            print('Failed to load MoeTTS config, use default configuration.')
         
         vitss_cfg = '/'.join(tts_model.split('/')[:-1])
         config_file = (vitss_cfg+'/config.json')
@@ -267,13 +303,19 @@ root.geometry("760x450")
 root.title('MoeTTS-CPU')
 root.iconbitmap('./favicon.ico')
 style = ttk.Style("minty")
+# DPI adapt
+
+ctypes.windll.shcore.SetProcessDpiAwareness(1)
+ScaleFactor=ctypes.windll.shcore.GetScaleFactorForDevice(0)
+root.tk.call('tk', 'scaling', ScaleFactor/80)
+root.geometry(f"{int(760+760*0.5*(ScaleFactor/100-1))}x{int(450+450*0.5*(ScaleFactor/100-1))}")
 
 nb = ttk.Notebook(root)
 nb.pack(side=LEFT, padx=0,pady=(10, 0),  expand=YES, fill=BOTH)
 
 # Tacotron2
 taco_tab = ttk.Frame(nb)
-taco_entry_ipadx = 150
+taco_entry_ipadx = 175
 # Tacotron2 model path select
 taco_mp_label = ttk.Label(taco_tab, text='Tacotron2 模型：')
 taco_mp_label.grid(row=1, column=1, padx=(20, 5), pady=(15,5))
@@ -435,10 +477,16 @@ jtalk_mode = 'rsa'
 # tool box
 def jtalk_g2p(text, entry_box):
     entry_box.delete(0, 'end')
-    entry_box.insert(0, '正在转换...')
     root.update()
-    result = os.popen(f'.\jp_g2p\japanese_g2p.exe -{jtalk_mode} {text}')
-    res = result.read()
+    # result = os.popen(f'.\jp_g2p\japanese_g2p.exe -{jtalk_mode} {text}')
+    # res = result.read()
+    res = ''
+    if jtalk_mode == 'r':
+        res = jp_g2p.get_romaji(text)
+    elif jtalk_mode == 'rs':
+        res = jp_g2p.get_romaji_with_space(text)
+    elif jtalk_mode == 'rsa':
+        res = jp_g2p.get_romaji_with_space_and_accent(text)
     entry_box.delete(0, 'end')
     entry_box.insert(0, res)
 
@@ -449,27 +497,27 @@ def set_jtalk_mode(mode):
 tool_tab = ttk.Frame(nb)
 
 jtalk_group = ttk.Labelframe(master=tool_tab, text="OpenJtalk g2p (base on CjangCjengh's jp_g2p tool):", padding=15)
-jtalk_group.pack(fill=BOTH, side=TOP, expand=True, ipadx=740, ipady=30)
+jtalk_group.pack(fill=BOTH, side=TOP, expand=True, ipadx=740, ipady=20)
 # nb.pack(side=LEFT, padx=0,pady=(10, 0),  expand=YES, fill=BOTH)
 jtext_label = ttk.Label(jtalk_group, text='日语文本：')
-jtext_label.grid(row=1, column=1, padx=(20, 5), pady=(15,5))
+jtext_label.grid(row=1, column=1, padx=(20, 5), pady=5)
 
 
 jtext = ttk.Entry(jtalk_group)
-jtext.grid(row=1, column=2, padx=20, pady=(15, 5), ipadx=170)
+jtext.grid(row=1, column=2, padx=20, pady=5, ipadx=170)
 
 jtext_btn = ttk.Button(jtalk_group,  text="转换(g2p)", bootstyle=(INFO, OUTLINE), 
     command=lambda :jtalk_g2p(jtext.get(), jtext))
-jtext_btn.grid(row=1, column=3, padx=5, pady=(15, 5))
+jtext_btn.grid(row=1, column=3, padx=5, pady=5)
 
 text_label = ttk.Label(jtalk_group, text='转换模式:')
-text_label.place(x=20, y=60)
+text_label.place(x=20, y=50)
 radio1 = ttk.Radiobutton(jtalk_group, text="普通转换", value=1, command=lambda:set_jtalk_mode('r'))
-radio1.place(x=150, y=60)
+radio1.place(x=150, y=50)
 radio2 = ttk.Radiobutton(jtalk_group, text="空格分词", value=2, command=lambda:set_jtalk_mode('rs'))
-radio2.place(x=260, y=60)
+radio2.place(x=260, y=50)
 radio3 = ttk.Radiobutton(jtalk_group, text="分词+调形", value=3, command=lambda:set_jtalk_mode('rsa'))
-radio3.place(x=370, y=60)
+radio3.place(x=370, y=50)
 
 nb.add(taco_tab, text="Tacotron2", sticky=NW)
 nb.add(vits_tab, text="VITS-Single", sticky=NW)

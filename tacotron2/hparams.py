@@ -1,7 +1,7 @@
 import tensorflow as tf
 import sys
-sys.path.append('./custom/')
-from tacotext import symbols
+# sys.path.append('./custom/')
+# from tacotext import symbols
 
 
 def create_hparams(hparams_string=None, verbose=False):
@@ -29,7 +29,7 @@ def create_hparams(hparams_string=None, verbose=False):
         load_mel_from_disk=False,
         training_files='filelists/ljs_audio_text_train_filelist.txt',
         validation_files='filelists/ljs_audio_text_val_filelist.txt',
-        text_cleaners=['custom_cleaners'],
+        # text_cleaners=[],
 
         ################################
         # Audio Parameters             #
@@ -46,7 +46,7 @@ def create_hparams(hparams_string=None, verbose=False):
         ################################
         # Model Parameters             #
         ################################
-        n_symbols=len(symbols),
+        # n_symbols=len(symbols),
         symbols_embedding_dim=512,
 
         # Encoder parameters
