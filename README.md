@@ -25,20 +25,23 @@ VITS:https://github.com/jaywalnut310/vits
 ### 模型目录格式
 
 1. 单模型可以放在任意位置，如果模型带有配置文件，请将它重命名为`config.json`并与TTS模型放置在同一目录。（例如hifigan，vits模型，它们是带有配置文件的）
-2. **VITS模型请将`config.json`中的cleaners 改为`custom_cleaners`**
+
+2. 从1.2.0版本后，软件弃用了原本项目中的text模块以及cleaners。并增加了GUI专用配置文件。你需要将你的模型使用的symbols写入到moetts配置文件中。（如果你不知道该如何进行此步骤，可以参考给出的预训练模型）
+
+   配置文件示例 (atri vits模型使用的配置)（文件名：moetts.json）：
+
+   ```json
+   {
+   	"symbols":["_", ",", ".", "!", "?", "-", "A", "E", "I", "N", "O", "Q", "U", "a", "b", "d", "e", "f", "g", "h", "i", "j", "k", "m", "n", "o", "p", "r", "s", "t", "u", "v", "w", "y", "z", "\u0283", "\u02a7", "\u2193", "\u2191", " "]
+   }
+   
+   ```
 
 ### 文本输入格式
 
 文本一般是输入音素（日语在这里应该输入罗马音），但具体要看模型训练者的数据是怎么输入的。比如我的ATRI模型(Tacotron2版本)是输入无空格罗马音，标点符号只支持逗号句号。
 
-### 自定义Cleaner与Symbols
-
-你可以在与`moetts.exe`同级的目录下找到`custom`文件夹，这里面存放了两种模型的文本模块。
-
-1. 自定义cleaner：找到`cleaners.py`并修改`custom_cleaners`函数即可（软件默认只会移除不在symbols中的字符，不对文本做进一步处理）
-2. 自定义symbols：找到`symbols.py`，将里面的符号为你需要的符号
-
-**注意：不同模型可能使用不同的cleaners与symbols训练，有需要请修改他们，保证模型能正常使用。**
+注：v1.2.0后弃用了cleaners，但你可以使用toolbox中的工具进行文本到发音转换。
 
 ### GUI使用方法
 
@@ -60,6 +63,23 @@ VITS特殊说明
 1. VITS-Single，VITS-Multi分别为单角色模型与多角色模型
 2. VITS-Multi中的原角色ID即待合成语音的角色ID，需要填入数字，目标角色ID为语音迁移功能的待迁移目标角色ID。
 3. **待迁移音频需要22050的采样率，16位，单声道。**
+
+## V 1.2.0 更新功能说明
+
+1. Toolbox更新
+
+   1. 加入中文g2p工具
+   2. 内置了pyopenjtalk，g2p速度更快，解决gbk编码错误
+
+   ![1.2.0 tool](assets\1.2.0_tool.png)
+
+2. 设置更新
+
+   1. 添加批量合成模式
+   2. 支持自定义文件名输出
+   3. VITS模型支持语速调节
+
+   ![1.2.0 tool](assets\1.2.0_settings.png)
 
 ## 模型下载
 
@@ -87,21 +107,23 @@ x. 模型名
 
    模型输入：无空格罗马音，标点可保留英文逗号句号。例如：`tozendesu.koseinodesukara.`
 
-   下载地址：链接：https://pan.baidu.com/s/1hJIbIX0r1UpI3UEtsp-6EA?pwd=jdi4 提取码：jdi4
-
-   配套HifiGAN模型下载：链接：https://pan.baidu.com/s/1PGU8XEs5wy4ppJL6GjTgMQ?pwd=24g8 提取码：24g8
+   模型下载：链接：https://pan.baidu.com/s/1itDhrhzw6uZYxB2238BzTQ?pwd=0z3u 
+提取码：0z3u
    
    详细信息：从游戏中选择1300条语音训练，训练约600 Epoch，训练时罗马音使用Bing翻译API
    
    模型类型：Tacotron2+Hifigan
-
+   
 2. ATRI-VITS
 
    描述：游戏 ATRI- My dear moments 的角色ATRI模型
 
    模型输入：带有分词与调形标注的罗马音，标点符号可使用`,.?!`，工具箱版本带有此转换功能。
 
-   下载地址：链接：https://pan.baidu.com/s/1ThJPo4b7X9j5C4Ap3YFWEQ?pwd=yl7o  提取码：yl7o
+   模型下载：
+
+   链接：https://pan.baidu.com/s/1_vhOx50OE5R4bE02ZMe9GA?pwd=9jo4 
+   提取码：9jo4
 
    详细信息：使用VITS训练约 900 Epoch。
 
@@ -113,14 +135,15 @@ x. 模型名
 
    模型输入：带有分词与调形标注的罗马音，标点符号可使用`,.?!`，工具箱版本带有此转换功能。
 
-   下载地址：链接：https://pan.baidu.com/s/12giI1MpQWu_-KnhfQLV9nw?pwd=wc8u 提取码：wc8u
-
-   详细信息：
-
-   ​	角色表：0 杏璃 1 杏铃 2 Apeiria 3 明日香 4 ATRI 5 艾拉 6 彩音 7 星奏 8 由依 9 冰织 10 真白 11 美绘瑠 12 二阶堂真红
-
-   ​	此版本为VITS训练200 Epoch（该模型仍在训练，如果您的二次创作中有更高质量的语音使用需求，可以联系作者(https://space.bilibili.com/228292951)实时获取更高Epoch的版本）
-
+   模型下载：链接：https://pan.baidu.com/s/1fzpC_2YEISvahUzX1iYboA?pwd=yde8 
+提取码：yde8
+   
+详细信息：
+   
+​	角色表：0 杏璃 1 杏铃 2 Apeiria 3 明日香 4 ATRI 5 艾拉 6 彩音 7 星奏 8 由依 9 冰织 10 真白 11 美绘瑠 12 二阶堂真红
+   
+​	此版本为VITS训练200 Epoch（该模型仍在训练，如果您的二次创作中有更高质量的语音使用需求，可以联系作者(https://space.bilibili.com/228292951)实时获取更高Epoch的版本）
+   
    模型类型：VITS多角色
 
 ## 常见QA
@@ -131,7 +154,7 @@ x. 模型名
 
 2. Q：是否有命令行版本或HttpApi？
 
-   A：考虑到CLI与HttpApi容易遭到滥用，暂时延期开发。（1.0.0版本由用户**[ShiroDoMain](https://github.com/ShiroDoMain)**制作了CLI版本，需要可到cli分支获取）
+   A：正在开发中
 
 3. Q：如何获得完整代码？
 

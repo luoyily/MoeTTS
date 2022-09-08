@@ -19,27 +19,31 @@ VITS:https://github.com/jaywalnut310/vits
 
 On the basis of the open source agreement please also comply with the following rules.
 
-1. (Important) Do not use this software, the pre-trained models provided by this repository or the speech synthesis results for direct commercial purposes (e.g. QQ bots, direct sales, commercial games, etc.) derivative work is not included.
+1. (Important) Do not use this software, the pre-trained models provided by this repository or the speech synthesis results for direct commercial purposes (e.g. QQ bots with paid features, direct sales, commercial games, etc.) derivative work is not included.
 2. Please comply with the user agreement of the original work and do not create content that will adversely affect the original work.
 
 ## Tutorial
 
 ### File directory format
 
-If the model does not have a configuration file, you can place it in any directory, if the model has a configuration file, rename it to `config.json` and place it in the same directory as the model
+1. If the model does not have a configuration file, you can place it in any directory, if the model has a configuration file, rename it to `config.json` and place it in the same directory as the model.
+
+2. Since version 1.2.0, the text module and cleaners from the original project have been deprecated. So, you need to write the symbols used by your model to the moetts configuration file. (If you don't know how to do this step, you can refer to the pre-trained models given)
+
+   Example (moetts.json):
+
+   ```json
+   {
+   	"symbols":["_", ",", ".", "!", "?", "-", "A", "E", "I", "N", "O", "Q", "U", "a", "b", "d", "e", "f", "g", "h", "i", "j", "k", "m", "n", "o", "p", "r", "s", "t", "u", "v", "w", "y", "z", "\u0283", "\u02a7", "\u2193", "\u2191", " "]
+   }
+   
+   ```
+
+   
 
 ### Inputs
 
 Mostly you need to input phoneme (In Japanese, it stands for the Roman Tones), but the author of the models can decide other input methods. For exmaple, the ATRI model(Tacotron2 version) supports Roman Tones without spaces only and the commas and the periods only.
-
-### custom cleaner and symbols
-
-You can find the `custom` folder in the same level as `moetts.exe`, which contains the text modules for both TTS models.
-
-1. custom cleaners: locate `cleaners.py` and modify the `custom_cleaners` function (the software does not process text by default)
-2. Custom symbols: locate `symbols.py` and change the symbols inside to the symbols you need
-
-Note: Different models may be trained with different cleaners and symbols, please modify them if necessary to ensure that the model works well.
 
 ### GUI
 
@@ -61,6 +65,23 @@ About VITS
 1. VITS-Single and VITS-Multi are single speaker model and multi speaker model respectively.
 2. the `原角色ID` in VITS-Multi is the ID of the speaker to be synthesized, you need to provide a number, the `目标角色ID` is used as the target speaker id for `voice conversion`.
 3. Using `语音迁移`(voice conversion) requires a wav file with a sample rate of 22050.
+
+## V 1.2.0 Update
+
+1. ToolBox Update
+
+   1. Add Chinese g2p tool.
+   2. Change pyopenjtalk to build-in and fixed Unicode error.
+
+   ![1.2.0 tool](assets\1.2.0_tool.png)
+
+2. Settings Update
+
+   1. Add batch processing mode
+   2. Support use custom filename
+   3. Support change VITS length-scale
+
+   ![1.2.0 tool](D:\Projects\code\python\moetts\MoeTTS\README_en.assets\1.2.0_settings.png)
 
 ## Model Downloads
 
@@ -88,13 +109,67 @@ Model type:
 
    Input method: Roman tone without spaces. Only English comma or period accepted. Choose basic_cleaners for the Cleaners option. For example: `tozendesu.koseinodesukara.`
 
-   Download Address: https://pan.baidu.com/s/1hJIbIX0r1UpI3UEtsp-6EA?pwd=jdi4 Passcode: jdi4
+   Download Address: https://pan.baidu.com/s/1itDhrhzw6uZYxB2238BzTQ?pwd=0z3u
    
-   Hifigan's Model download address:https://pan.baidu.com/s/1PGU8XEs5wy4ppJL6GjTgMQ?pwd=24g8 Passcode: 24g8
+   Passcode: 0z3u
    
    More info: Trained with 1300 in game voices. About 600 Epoch.
    
    Model type: Tacotron2+hifigan
+   
+2. ATRI-VITS
+
+   Description:  ATRI - Character's model of *My dear moments* 
+
+   Input method: Japanese text converted by "jp g2p - 调形标注" in the toolbox
+
+   Download Address: https://pan.baidu.com/s/1_vhOx50OE5R4bE02ZMe9GA?pwd=9jo4 
+
+   Passcode:9jo4 
+
+   Model type: VITS Single
+
+3. 13 Galgame characters
+
+   Description: models of 13 characters from several galgames
+
+   Input method: Japanese text converted by "jp g2p - 调形标注" in the toolbox
+
+   Download Address:https://pan.baidu.com/s/1fzpC_2YEISvahUzX1iYboA?pwd=yde8 
+
+   Passcode: yde8
+
+   Details:
+
+   ​	Speakers: 
+
+   ​	0 Takakura Anri
+
+   ​	1 Takakura Anzu 
+
+   ​	2 Apeiria 
+
+   ​	3 Kurashina Asuka
+
+   ​	4 ATRI 
+
+   ​	5  ISLA
+
+   ​	6 Shindou Ayane
+
+   ​	7 Himeno Sena
+
+   ​	8 Komari Yui
+
+   ​	9 Miyohashi Koori 
+
+   ​	10 Arisaka Mashiro
+
+   ​	11 Sirosaki Mieru
+
+   ​	12 Nikaidou Shinku
+
+   Model type: VITS Multi
 
 ## FAQ
 
