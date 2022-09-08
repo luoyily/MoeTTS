@@ -125,7 +125,7 @@ def inference_taco(tts_model, hifigan_model, target_text, output):
                 audio = audio * 32768.0
                 audio = audio.cpu().numpy().astype('int16')
                 if enable_custom_filename:
-                    write(os.path.join(output,'.wav'), h.sampling_rate, audio)
+                    write(output+'.wav', h.sampling_rate, audio)
                 else:
                     if enable_batch_out:
                         write(os.path.join(output,f'output_{n}.wav'), h.sampling_rate, audio)
@@ -216,7 +216,7 @@ def inference_vitss(tts_model, target_text, output):
                 audio = audio.squeeze()
                 audio = audio.astype('int16')
                 if enable_custom_filename:
-                    write(os.path.join(output,'.wav'), 22050, audio)
+                    write(output+'.wav', 22050, audio)
                 else:
                     if enable_batch_out:
                         write(os.path.join(output,f'output_vitss_{n}.wav'), 22050, audio)
@@ -284,7 +284,7 @@ def inference_vitsm(tts_model, target_text, output, speaker_id, mode='synthesis'
         audio = audio.squeeze()
         audio = audio.astype('int16')
         if enable_custom_filename:
-            write(os.path.join(output,'.wav'), 22050, audio)
+            write(output+'.wav', 22050, audio)
         else:
             write(os.path.join(output,'output_convert.wav'), 22050, audio)
     
@@ -303,7 +303,7 @@ def inference_vitsm(tts_model, target_text, output, speaker_id, mode='synthesis'
                 audio = audio.squeeze()
                 audio = audio.astype('int16')
                 if enable_custom_filename:
-                    write(os.path.join(output,'.wav'), 22050, audio)
+                    write(output+'.wav', 22050, audio)
                 else:
                     if enable_batch_out:
                         write(os.path.join(output,f'output_vitsm_{n}.wav'), 22050, audio)

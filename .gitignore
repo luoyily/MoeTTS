@@ -1,5 +1,8 @@
 /jp_g2p
 /tacotron2/__pycache__
+/hifigan/__pycache__
+/vits/__pycache__
+/vits/monotonic_align/__pycache__
 /custom/tacotext/__pycache__
 /custom/vitstext/__pycache__
 hifigan/__pycache__
@@ -7,3 +10,6 @@ test.py
 /test
 /g2p/jp/__pycache__/
 /g2p/zh/__pycache__/
+moe_tts_cpu.spec
+/build
+/dist
