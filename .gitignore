@@ -5,3 +5,5 @@
 hifigan/__pycache__
 test.py
 /test
+/g2p/jp/__pycache__/
+/g2p/zh/__pycache__/

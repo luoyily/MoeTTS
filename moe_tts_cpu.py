@@ -326,8 +326,8 @@ def inference_vitsm(tts_model, target_text, output, speaker_id, mode='synthesis'
             print('Trying to load MoeTTS config...')
             moe_cfg_vits = json.load(open(('/'.join(tts_model.split('/')[:-1]))+'/moetts.json', encoding='utf-8'))
             symbols = moe_cfg_vits['symbols']
-            speakers = moe_cfg_vits['speakers']
-            print(f'Speakers:\n{speakers}')
+            # speakers = moe_cfg_vits['speakers']
+            # print(f'Speakers:\n{speakers}')
         except:
             print('Failed to load MoeTTS config, use default configuration.')
         
