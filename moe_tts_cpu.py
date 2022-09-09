@@ -531,6 +531,8 @@ vitsm_tgt_audio_btn = ttk.Button(vits_tab_2, text="语音迁移", bootstyle=(SEC
 vitsm_tgt_audio_btn.grid(row=6, column=3, padx=5, pady=5)
 
 jtalk_mode = 'rsa'
+replace_ts = False
+
 # tool box
 def jtalk_g2p(text, entry_box):
     entry_box.delete(0, 'end')
@@ -544,6 +546,8 @@ def jtalk_g2p(text, entry_box):
         res = jp_g2p.get_romaji_with_space(text)
     elif jtalk_mode == 'rsa':
         res = jp_g2p.get_romaji_with_space_and_accent(text)
+    if replace_ts:
+        res = res.replace('ʦ', 'ts')
     entry_box.delete(0, 'end')
     entry_box.insert(0, res)
 
@@ -551,7 +555,15 @@ def set_jtalk_mode(mode):
     global jtalk_mode
     jtalk_mode = mode
 
+def set_replace_ts():
+    global replace_ts
+    replace_ts = ~replace_ts
+
+# 滚动条设计尝试
+# canvas=ttk.Canvas(nb, width=800, height=1000)
+# canvas.place(x=0, y=0)
 tool_tab = ttk.Frame(nb)
+# canvas.create_window(1100, 400,anchor='center' , window=tool_tab) 
 # Japanese g2p
 jtalk_group = ttk.Labelframe(master=tool_tab, text="OpenJtalk g2p (base on CjangCjengh's jp_g2p tool):", padding=15)
 jtalk_group.pack(fill=BOTH, side=TOP, expand=True, ipadx=740, ipady=20)
@@ -563,7 +575,7 @@ jtext_label.grid(row=1, column=1, padx=(20, 5), pady=5)
 jtext = ttk.Entry(jtalk_group)
 jtext.grid(row=1, column=2, padx=20, pady=5, ipadx=170)
 
-jtext_btn = ttk.Button(jtalk_group,  text="转换(g2p)", bootstyle=(INFO, OUTLINE), 
+jtext_btn = ttk.Button(jtalk_group,  text="转换(g2p)", bootstyle=(SECONDARY, OUTLINE), 
     command=lambda :jtalk_g2p(jtext.get(), jtext))
 jtext_btn.grid(row=1, column=3, padx=5, pady=5)
 
@@ -576,6 +588,8 @@ radio2 = ttk.Radiobutton(jtalk_group, text="空格分词",variable=j_radio_var, 
 radio2.place(x=260, y=50)
 radio3 = ttk.Radiobutton(jtalk_group, text="分词+调形",variable=j_radio_var, value=3, command=lambda:set_jtalk_mode('rsa'))
 radio3.place(x=370, y=50)
+jtalk_check1 = ttk.Checkbutton(jtalk_group, text='替换ʦ到ts', command=lambda:set_replace_ts())
+jtalk_check1.place(x=480, y=50)
 
 # Chinese g2p
 pinyin_mode = 'normal'
@@ -605,7 +619,7 @@ pinyin_label.grid(row=1, column=1, padx=(20, 5), pady=5)
 pinyin_text = ttk.Entry(pinyin_group)
 pinyin_text.grid(row=1, column=2, padx=20, pady=5, ipadx=170)
 
-pinyin_text_btn = ttk.Button(pinyin_group,  text="转换(g2p)", bootstyle=(INFO, OUTLINE), 
+pinyin_text_btn = ttk.Button(pinyin_group,  text="转换(g2p)", bootstyle=(SECONDARY, OUTLINE), 
     command=lambda :py_g2p(pinyin_text.get(), pinyin_text))
 pinyin_text_btn.grid(row=1, column=3, padx=5, pady=5)
 
@@ -650,7 +664,7 @@ audio_out_btn = ttk.Button(audio_group,  text="浏览目录", bootstyle=(INFO, O
     command=lambda :save_file_locate(audio_out))
 audio_out_btn.grid(row=2, column=3, padx=5, pady=5)
 
-audio_out_btn2 = ttk.Button(audio_group,  text="   转 换   ", bootstyle=(INFO, OUTLINE), 
+audio_out_btn2 = ttk.Button(audio_group,  text="   转 换   ", bootstyle=(SECONDARY, OUTLINE), 
     command=lambda :audio_convert(audio_path.get(), str(audio_out.get())+'.wav'))
 audio_out_btn2.grid(row=3, column=3, padx=5, pady=5)
 
@@ -687,6 +701,25 @@ vits_ls.grid(row=1, column=2, padx=(20, 5), pady=5)
 vits_ls_btn = ttk.Button(vits_setting_group,  text="设定", bootstyle=(INFO, OUTLINE), 
     command=lambda :set_vits_length_scale(vits_ls.get()))
 vits_ls_btn.grid(row=1, column=3, padx=5, pady=5)
+
+# ttk Theme 
+theme_group = ttk.Labelframe(master=setting_tab, text="外观设定:", padding=15)
+theme_group.pack(fill=BOTH, side=TOP, expand=True, ipadx=740, ipady=20)
+
+style = ttk.Style()
+style.configure('Horizontal.TScrollbar')
+theme_names = style.theme_names()
+theme_lb = ttk.Label(theme_group, text="选择主题:")
+theme_lb.pack(padx=(20, 5), side=LEFT)
+theme_cbo = ttk.Combobox(master=theme_group,text=style.theme.name,values=theme_names)
+theme_cbo.pack(padx=(20, 5), side=LEFT)
+theme_cbo.current(theme_names.index(style.theme.name))
+
+def change_theme(e):
+    style.theme_use(theme_cbo.get())
+    theme_cbo.selection_clear()
+
+theme_cbo.bind("<<ComboboxSelected>>", change_theme)
 
 nb.add(taco_tab, text="Tacotron2", sticky=NW)
 nb.add(vits_tab, text="VITS-Single", sticky=NW)
