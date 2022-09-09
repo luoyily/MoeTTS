@@ -71,15 +71,16 @@ VITS特殊说明
    1. 加入中文g2p工具
    2. 内置了pyopenjtalk，g2p速度更快，解决gbk编码错误
 
-   ![1.2.0 tool](assets\1.2.0_tool.png)
+   ![1.2.0 tool](assets/1.2.0_tool.png)
 
 2. 设置更新
 
    1. 添加批量合成模式
    2. 支持自定义文件名输出
    3. VITS模型支持语速调节
-
-   ![1.2.0 tool](assets\1.2.0_settings.png)
+4. 主题选择
+   
+   ![1.2.0 tool](assets/1.2.0_settings.png)
 
 ## 模型下载
 
@@ -118,7 +119,7 @@ x. 模型名
 
    描述：游戏 ATRI- My dear moments 的角色ATRI模型
 
-   模型输入：带有分词与调形标注的罗马音，标点符号可使用`,.?!`，工具箱版本带有此转换功能。
+   模型输入：带有分词与调形标注的罗马音，标点符号可使用`,.?!`。可使用工具箱中的日语g2p(调形标注+ts替换)
 
    模型下载：
 
@@ -133,17 +134,22 @@ x. 模型名
 
    描述：来自多个galgame的13位角色的模型
 
-   模型输入：带有分词与调形标注的罗马音，标点符号可使用`,.?!`，工具箱版本带有此转换功能。
+   模型输入：带有分词与调形标注的罗马音，标点符号可使用`,.?!`。可使用工具箱中的日语g2p(调形标注+ts替换)
 
-   模型下载：链接：https://pan.baidu.com/s/1fzpC_2YEISvahUzX1iYboA?pwd=yde8 
-提取码：yde8
+   模型下载（旧版200Epoch）：
+
+   链接：https://pan.baidu.com/s/1fzpC_2YEISvahUzX1iYboA?pwd=yde8 
+   提取码：yde8
    
+   模型下载（新版700Epoch）：
+   
+   https://pan.baidu.com/s/1anZ3eusmG8BVhrQQrvlkug?pwd=0i9r 
+   提取码：0i9r
+
 详细信息：
-   
+
 ​	角色表：0 杏璃 1 杏铃 2 Apeiria 3 明日香 4 ATRI 5 艾拉 6 彩音 7 星奏 8 由依 9 冰织 10 真白 11 美绘瑠 12 二阶堂真红
-   
-​	此版本为VITS训练200 Epoch（该模型仍在训练，如果您的二次创作中有更高质量的语音使用需求，可以联系作者(https://space.bilibili.com/228292951)实时获取更高Epoch的版本）
-   
+
    模型类型：VITS多角色
 
 ## 常见QA

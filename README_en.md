@@ -73,7 +73,7 @@ About VITS
    1. Add Chinese g2p tool.
    2. Change pyopenjtalk to build-in and fixed Unicode error.
 
-   ![1.2.0 tool](assets\1.2.0_tool.png)
+   ![1.2.0 tool](assets/1.2.0_tool.png)
 
 2. Settings Update
 
@@ -81,7 +81,7 @@ About VITS
    2. Support use custom filename
    3. Support change VITS length-scale
 
-   ![1.2.0 tool](D:\Projects\code\python\moetts\MoeTTS\README_en.assets\1.2.0_settings.png)
+   ![1.2.0 tool](assets/1.2.0_settings.png)
 
 ## Model Downloads
 
@@ -121,7 +121,7 @@ Model type:
 
    Description:  ATRI - Character's model of *My dear moments* 
 
-   Input method: Japanese text converted by "jp g2p - 调形标注" in the toolbox
+   Input method: Japanese text converted by "jp g2p - 调形标注+替换ts" in the toolbox
 
    Download Address: https://pan.baidu.com/s/1_vhOx50OE5R4bE02ZMe9GA?pwd=9jo4 
 
@@ -133,42 +133,49 @@ Model type:
 
    Description: models of 13 characters from several galgames
 
-   Input method: Japanese text converted by "jp g2p - 调形标注" in the toolbox
+   Input method: Japanese text converted by "jp g2p - 调形标注+替换ts" in the toolbox
 
-   Download Address:https://pan.baidu.com/s/1fzpC_2YEISvahUzX1iYboA?pwd=yde8 
+   Download Address(old version 200Epoch):
+
+   https://pan.baidu.com/s/1fzpC_2YEISvahUzX1iYboA?pwd=yde8 
 
    Passcode: yde8
 
-   Details:
+   Download Address(fix version 700Epoch):
 
-   ​	Speakers: 
-
-   ​	0 Takakura Anri
-
-   ​	1 Takakura Anzu 
-
-   ​	2 Apeiria 
-
-   ​	3 Kurashina Asuka
-
-   ​	4 ATRI 
-
-   ​	5  ISLA
-
-   ​	6 Shindou Ayane
-
-   ​	7 Himeno Sena
-
-   ​	8 Komari Yui
-
-   ​	9 Miyohashi Koori 
-
+   https://pan.baidu.com/s/1anZ3eusmG8BVhrQQrvlkug?pwd=0i9r 
+Passcode：0i9r
+   
+Details:
+   
+​	Speakers: 
+   
+​	0 Takakura Anri
+   
+​	1 Takakura Anzu 
+   
+​	2 Apeiria 
+   
+​	3 Kurashina Asuka
+   
+​	4 ATRI 
+   
+​	5  ISLA
+   
+​	6 Shindou Ayane
+   
+​	7 Himeno Sena
+   
+​	8 Komari Yui
+   
+​	9 Miyohashi Koori 
+   
    ​	10 Arisaka Mashiro
-
+   
    ​	11 Sirosaki Mieru
-
+   
    ​	12 Nikaidou Shinku
-
+   
    Model type: VITS Multi
 
 ## FAQ
