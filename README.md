@@ -186,5 +186,6 @@ x. 模型名
 
 1. **[ShiroDoMain](https://github.com/ShiroDoMain)**：1.0.0 CLI版本开发
 2. **[menproject](https://github.com/menproject)**：1.0.0 版本英语自述文件翻译
-
 3. **[CjangCjengh](https://github.com/CjangCjengh/)**：提供编译的g2p工具以及适用于日语调形标注的符号文件。
+4. **[skytnt](https://huggingface.co/skytnt)**: 提供了hugging face 在线 demo
+

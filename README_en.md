@@ -205,5 +205,6 @@ If you have any suggestions or discovered and bugs, please submit an issue.
 
 1. **[ShiroDoMain](https://github.com/ShiroDoMain)**: Developed the cli for version 1.0.0
 2. **[menproject](https://github.com/menproject)**: Translation of the English README for version 1.0.0
-
 3. **[CjangCjengh](https://github.com/CjangCjengh/)**: Provides compiled g2p tools and symbol files suitable for Japanese tonal annotation.
+4. **[skytnt](https://huggingface.co/skytnt)**: hugging face online demo
+
