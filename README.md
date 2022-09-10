@@ -82,6 +82,10 @@ VITS特殊说明
    
    ![1.2.0 tool](assets/1.2.0_settings.png)
 
+## 在线Demo
+
+Integrated into [Huggingface Spaces ](https://huggingface.co/spaces) using  [Gradio](https://github.com/gradio-app/gradio). Try it out [![Hugging  Face  Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/skytnt/moe-tts)
+
 ## 模型下载
 
 提交格式参考：

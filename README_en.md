@@ -83,6 +83,12 @@ About VITS
 
    ![1.2.0 tool](assets/1.2.0_settings.png)
 
+
+
+## Online Demo
+
+Integrated into [Huggingface Spaces ](https://huggingface.co/spaces) using  [Gradio](https://github.com/gradio-app/gradio). Try it out [![Hugging  Face  Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/skytnt/moe-tts)
+
 ## Model Downloads
 
 Submit models in this model:
@@ -146,36 +152,37 @@ Model type:
    https://pan.baidu.com/s/1anZ3eusmG8BVhrQQrvlkug?pwd=0i9r 
 Passcode：0i9r
    
+
 Details:
-   
+
 ​	Speakers: 
-   
+
 ​	0 Takakura Anri
-   
+
 ​	1 Takakura Anzu 
-   
+
 ​	2 Apeiria 
-   
+
 ​	3 Kurashina Asuka
-   
+
 ​	4 ATRI 
-   
+
 ​	5  ISLA
-   
+
 ​	6 Shindou Ayane
-   
+
 ​	7 Himeno Sena
-   
+
 ​	8 Komari Yui
-   
+
 ​	9 Miyohashi Koori 
-   
+
    ​	10 Arisaka Mashiro
-   
+
    ​	11 Sirosaki Mieru
-   
+
    ​	12 Nikaidou Shinku
-   
+
    Model type: VITS Multi
 
 ## FAQ
