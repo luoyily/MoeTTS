@@ -5,13 +5,14 @@ Speech synthesis model repo for galgame characters based on Tacotron2 , Hifigan 
 
 ## About
 
-这是一个存放基于Tacotron2，Hifigan，VITS的galgame角色语音合成的模型库的仓库。另外也用于发行编译后的推理GUI。
+这是一个存放基于Tacotron2，Hifigan，VITS，Diff-SVC的galgame角色语音合成的模型库的仓库。另外也用于发行编译后的推理GUI。
 
-hifi-gan: https://github.com/jik876/hifi-gan
+## 近期更新
 
-Tacotron2: https://github.com/NVIDIA/tacotron2
+1.2.2-beta:
 
-VITS:https://github.com/jaywalnut310/vits
+> 1. 修复可能在部分设备上DLL缺失问题。
+> 2. 增加Diff-SVC支持
 
 ## 用户协议
 
@@ -24,11 +25,11 @@ VITS:https://github.com/jaywalnut310/vits
 
 ### 模型目录格式
 
-1. 单模型可以放在任意位置，如果模型带有配置文件，请将它重命名为`config.json`并与TTS模型放置在同一目录。（例如hifigan，vits模型，它们是带有配置文件的）
+1. 单模型可以放在任意位置，如果模型带有配置文件，请将它重命名为`config.json`（diff-svc请重命名为`config.yaml`）并与模型放置在同一目录。（例如hifigan，vits模型，它们是带有配置文件的）
 
-2. 从1.2.0版本后，软件弃用了原本项目中的text模块以及cleaners。并增加了GUI专用配置文件。你需要将你的模型使用的symbols写入到moetts配置文件中。（如果你不知道该如何进行此步骤，可以参考给出的预训练模型）
+2. **（TTS模型注意）**1.2.0版本后，你需要将你的模型使用的symbols按以下示例保存为`moetts.json`并与模型放置在同一目录。（如果你不知道该如何进行此步骤，可以参考给出的预训练模型中的配置文件）
 
-   配置文件示例 (atri vits模型使用的配置)（文件名：moetts.json）：
+   GUI配置文件示例 (atri vits模型使用的配置)（文件名：moetts.json）：
 
    ```json
    {
@@ -36,12 +37,14 @@ VITS:https://github.com/jaywalnut310/vits
    }
    
    ```
+   
+   注：**此配置不是训练模型使用的config.json**,是用于指定您的模型训练时所使用的symbols，例如VITS，您可以在`vits/text/symbols.py`中找到使用的symbols，并将它按以上格式保存为json。
 
 ### 文本输入格式
 
 文本一般是输入音素（日语在这里应该输入罗马音），但具体要看模型训练者的数据是怎么输入的。比如我的ATRI模型(Tacotron2版本)是输入无空格罗马音，标点符号只支持逗号句号。
 
-注：v1.2.0后弃用了cleaners，但你可以使用toolbox中的工具进行文本到发音转换。
+**注：v1.2.0后弃用了cleaners，Toolbox中提供了日语与中文的文本到发音转换，其他语言请自行clean后输入。**
 
 ### GUI使用方法
 
@@ -81,6 +84,21 @@ VITS特殊说明
 4. 主题选择
    
    ![1.2.0 tool](assets/1.2.0_settings.png)
+
+## Beta版本说明
+
+此版本为测试版，用于测试一些新功能，稳定性仅简单测试（win10系统下测试），代码也可能不规范。
+
+### diff-svc
+
+![diff-svc gui](./assets/diff_svc.png)
+
+参数说明：
+
+1. 升降半音：默认为0，支持正负整数输入，单位为半音
+2. 启用Crepe：该选项可降噪音频，启用后CPU耗时较高，越为原音频时长8倍，建议合成最终版本再开启，干净的音频无需开启。
+3. 加速倍率：默认为20，耗时约1:3，预览可使用100，耗时约1：1（该设置会影响音频质量）
+4. 待转换音频：wav或ogg纯人声音频，转换后为模型角色音色。
 
 ## 在线Demo
 
@@ -156,6 +174,35 @@ x. 模型名
 
    模型类型：VITS多角色
 
+4. 姬野星奏Diff-svc
+
+   描述：姬野星奏的语音转换模型。（以下两个类似）
+
+   模型下载：链接：https://pan.baidu.com/s/1vc7lLpyAjUDCKI_PO5CR6w?pwd=wad5 
+   提取码：wad5
+
+   模型类型：Diff-SVC
+
+   贡献者：MoeTTS(luoyily)
+
+5. 小鞠由依Diff-svc
+
+   模型下载：链接：https://pan.baidu.com/s/1WwluFplMLjVD9ZeF6qdAxQ?pwd=i4yc 
+   提取码：i4yc
+
+   模型类型：Diff-SVC
+
+   贡献者：MoeTTS(luoyily)
+
+6. ATRI Diff-svc
+
+   模型下载：链接：https://pan.baidu.com/s/1-jc9DSQp_fOv-kdc_4bkyQ?pwd=3jm3 
+   提取码：3jm3
+
+   模型类型：Diff-SVC
+
+   贡献者：RiceCake(https://github.com/gak123) 
+
 ## 常见QA
 
 1. Q：这个GUI能使用非官方Tacotron2或VITS训练的模型吗？
@@ -164,7 +211,7 @@ x. 模型名
 
 2. Q：是否有命令行版本或HttpApi？
 
-   A：正在开发中
+   A：可能只会有Windows版。
 
 3. Q：如何获得完整代码？
 
@@ -189,3 +236,18 @@ x. 模型名
 3. **[CjangCjengh](https://github.com/CjangCjengh/)**：提供编译的g2p工具以及适用于日语调形标注的符号文件。
 4. **[skytnt](https://huggingface.co/skytnt)**: 提供了hugging face 在线 demo
 
+## 参考&引用
+
+hifi-gan: https://github.com/jik876/hifi-gan
+
+Tacotron2: https://github.com/NVIDIA/tacotron2
+
+VITS:https://github.com/jaywalnut310/vits
+
+diff-svc:https://github.com/prophesier/diff-svc
+
+DiffSinger:https://github.com/MoonInTheRiver/DiffSinger
+
+DiffSinger(openvpi):https://github.com/openvpi/DiffSinger
+
+注：beta版本中的diff-svc打包了diff singer原仓库的声码器与pe权重。
