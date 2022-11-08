@@ -1,7 +1,7 @@
 # MoeTTS
 Speech synthesis model repo for galgame characters based on Tacotron2 , Hifigan and VITS. The repo is also used to publish precompiled GUI.
 
-**Notice ：**This project is only for AI study and hobby, because of the like of the characters to develop this project, no malicious purpose. If there is infringement, please submit issues, we will immediately remove the associated model.
+**Notice ：** This project is only for AI study and hobby, because of the like of the characters to develop this project, no malicious purpose. If there is infringement, please submit issues, we will immediately remove the associated model.
 
 [简体中文](README.md)   [English](README_en.md)
 
@@ -16,12 +16,20 @@ Speech synthesis model repo for galgame characters based on Tacotron2 , Hifigan 
 > 1. 修复可能在部分设备上DLL缺失问题。
 > 2. 增加Diff-SVC支持
 
+GPU 版本将会发布代码（体积问题没有Release版）
+
 ## 用户协议
 
 在开源协议的基础上还请遵守以下几点：
 
-1. （重要）不得将本软件、本仓库提供的预训练模型以及语音合成结果用于直接商业目的（例如：带有付费功能的QQ机器人，直接贩售，商业游戏等）对原作（模型数据来源作品）进行二次创作不包含在内。
+1. （重要）不得将本软件、本仓库提供的预训练模型以及衍生产物用于商业目的（例如：带有付费功能的QQ机器人，直接贩售，商业游戏等）对原作进行二次创作不包含在内。
 2. 二次创作请遵守原作用户协议，请勿制作会对原作造成不良影响的内容，另外请注明你的作品使用了语音合成，避免造成误会。
+3. 本仓库提供的预训练模型及数据部分来自社区，使用造成的一切后果由使用者承担，与本仓库作者及贡献者无关。
+4. 禁止使用本仓库任何内容（包括但不限于代码，编译后的exe，预训练模型）进行原创游戏制作。
+
+本项目态度：
+
+1. 本项目仅鼓励合理范围内对原作的二次创作，反对任何对原作以及相关行业的侮辱等不当行为。
 
 ## 使用方法
 

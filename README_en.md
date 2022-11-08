@@ -1,19 +1,24 @@
 # MoeTTS
 Speech synthesis model repo for galgame characters based on Tacotron2 , Hifigan and VITS. The repo is also used to publish precompiled GUI.
 
+**Notice ：** This project is only for AI study and hobby, because of the like of the characters to develop this project, no malicious purpose. If there is infringement, please submit issues, we will immediately remove the associated model.
+
 [简体中文](README.md)   [English](README_en.md)
 
 ## About
 
 Speech synthesis model repo for galgame characters based on Tacotron2, Hifigan and VITS. The repo is also used to publish precompiled GUI.
 
-Reference:
+(Beta version is also used to try other features)
 
-hifi-gan: https://github.com/jik876/hifi-gan
+## Latest Updates
 
-Tacotron2: https://github.com/NVIDIA/tacotron2
+1.2.2-beta:
 
-VITS:https://github.com/jaywalnut310/vits
+> 1. fix: Some devices are missing dlls and cannot run.
+> 2. update: support diff-svc.
+
+GPU version is coming soon.(code only)
 
 ## User Agreement
 
@@ -21,6 +26,12 @@ On the basis of the open source agreement please also comply with the following 
 
 1. (Important) Do not use this software, the pre-trained models provided by this repository or the speech synthesis results for direct commercial purposes (e.g. QQ bots with paid features, direct sales, commercial games, etc.) derivative work is not included.
 2. Please comply with the user agreement of the original work and do not create content that will adversely affect the original work.
+3. The pre-trained models and datasets provided by this repository are partially from the community, and all consequences caused by their use are borne by the users, not the authors and contributors of this repository.
+4. The use of any content of this repository (including but not limited to code, compiled exe, pre-trained models) for original game development is prohibited.
+
+Attitude of this project:
+
+1. This project only encourages derivative work of the original work within reasonable limits, and is against any inappropriate behavior such as insulting the original work and related industries.
 
 ## Tutorial
 
@@ -28,7 +39,7 @@ On the basis of the open source agreement please also comply with the following 
 
 1. If the model does not have a configuration file, you can place it in any directory, if the model has a configuration file, rename it to `config.json` and place it in the same directory as the model.
 
-2. Since version 1.2.0, the text module and cleaners from the original project have been deprecated. So, you need to write the symbols used by your model to the moetts configuration file. (If you don't know how to do this step, you can refer to the pre-trained models given)
+2. (Notes on TTS model) Since version 1.2.0, the text module and cleaners from the original project have been deprecated. So, you need to write the symbols used by your model to the moetts configuration file. (If you don't know how to do this step, you can refer to the pre-trained models given)
 
    Example (moetts.json):
 
@@ -83,7 +94,20 @@ About VITS
 
    ![1.2.0 tool](assets/1.2.0_settings.png)
 
+## Beta Version
 
+This version may be unstable.
+
+### diff-svc
+
+![diff-svc gui](./assets/diff_svc.png)
+
+Setting Instructions:
+
+1. 升降半音(Transposition): int (Unit: semitone)
+2. 启用Crepe(Enable Crepe)：Improved audio quality when enabled, but will take longer.
+3. 加速倍率(Acceleration ratio)：Default is 20, higher values will infer faster, but may affect quality.
+4. 待转换音频(Input audio)：wav or ogg file with vocals only.
 
 ## Online Demo
 
@@ -185,6 +209,27 @@ Details:
 
    Model type: VITS Multi
 
+4. Himeno Sena Diff-svc
+
+   Download  Address: https://pan.baidu.com/s/1vc7lLpyAjUDCKI_PO5CR6w?pwd=wad5 
+   Pass code：wad5
+
+   Model type: Diff-svc
+
+5. Komari Yui Diff-svc
+
+   Download  Address: https://pan.baidu.com/s/1WwluFplMLjVD9ZeF6qdAxQ?pwd=i4yc 
+   Pass code：i4yc
+
+   Model type: Diff-svc
+
+6. ATRI Diff-svc
+
+   Download  Address: https://pan.baidu.com/s/1-jc9DSQp_fOv-kdc_4bkyQ?pwd=3jm3 
+   Pass code：3jm3
+
+   Model type: Diff-svc
+
 ## FAQ
 
 1. Q: Can this GUI process non-official Tacotron2 models?
@@ -208,3 +253,18 @@ If you have any suggestions or discovered and bugs, please submit an issue.
 3. **[CjangCjengh](https://github.com/CjangCjengh/)**: Provides compiled g2p tools and symbol files suitable for Japanese tonal annotation.
 4. **[skytnt](https://huggingface.co/skytnt)**: hugging face online demo
 
+## Reference
+
+hifi-gan: https://github.com/jik876/hifi-gan
+
+Tacotron2: https://github.com/NVIDIA/tacotron2
+
+VITS:https://github.com/jaywalnut310/vits
+
+diff-svc:https://github.com/prophesier/diff-svc
+
+DiffSinger:https://github.com/MoonInTheRiver/DiffSinger
+
+DiffSinger(openvpi):https://github.com/openvpi/DiffSinger
+
+Note: The vocoder and pe weights in beta release are from DiffSinger repo.
