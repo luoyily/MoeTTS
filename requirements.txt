@@ -11,3 +11,11 @@ tensorflow==1.15.2
 torch==1.12.0
 tqdm==4.64.1
 SoundFile==0.10.3.post1
+torchcrepe
+praat-parselmouth==0.4.1
+scikit-image
+pyloudnorm
+webrtcvad
+h5py
+einops
+pycwt
