@@ -1,4 +1,4 @@
-import _io
+from io import BytesIO
 import json
 import os
 import re
@@ -107,7 +107,7 @@ def process_utterance(wav_path,
                       min_level_db=-100,
                       return_linear=False,
                       trim_long_sil=False, vocoder='pwg'):
-    if isinstance(wav_path, str) or isinstance(wav_path, _io.BytesIO):
+    if isinstance(wav_path, str) or isinstance(wav_path, BytesIO):
         if trim_long_sil:
             wav, _, _ = trim_long_silences(wav_path, sample_rate)
         else:
@@ -161,35 +161,36 @@ def get_pitch_parselmouth(wav_data, mel, hparams):
     f0_min = hparams['f0_min']
     f0_max = hparams['f0_max']
 
-    if hparams['hop_size'] == 128:
-        pad_size = 4
-    elif hparams['hop_size'] == 256:
-        pad_size = 2
-    else:
-        assert False
+    # if hparams['hop_size'] == 128:
+    #     pad_size = 4
+    # elif hparams['hop_size'] == 256:
+    #     pad_size = 2
+    # else:
+    #     assert False
 
     f0 = parselmouth.Sound(wav_data, hparams['audio_sample_rate']).to_pitch_ac(
         time_step=time_step, voicing_threshold=0.6,
         pitch_floor=f0_min, pitch_ceiling=f0_max).selected_array['frequency']
-    lpad = pad_size * 2
-    rpad = len(mel) - len(f0) - lpad
-    f0 = np.pad(f0, [[lpad, rpad]], mode='constant')
-    # mel and f0 are extracted by 2 different libraries. we should force them to have the same length.
-    # Attention: we find that new version of some libraries could cause ``rpad'' to be a negetive value...
-    # Just to be sure, we recommend users to set up the same environments as them in requirements_auto.txt (by Anaconda)
-    delta_l = len(mel) - len(f0)
-    assert np.abs(delta_l) <= 8
-    if delta_l > 0:
-        f0 = np.concatenate([f0, [f0[-1]] * delta_l], 0)
-    f0 = f0[:len(mel)]
+    # lpad = pad_size * 2
+    # rpad = len(mel) - len(f0) - lpad
+    # f0 = np.pad(f0, [[lpad, rpad]], mode='constant')
+    # # mel and f0 are extracted by 2 different libraries. we should force them to have the same length.
+    # # Attention: we find that new version of some libraries could cause ``rpad'' to be a negetive value...
+    # # Just to be sure, we recommend users to set up the same environments as them in requirements_auto.txt (by Anaconda)
+    # delta_l = len(mel) - len(f0)
+    # assert np.abs(delta_l) <= 8
+    # if delta_l > 0:
+    #     f0 = np.concatenate([f0, [f0[-1]] * delta_l], 0)
+    # f0 = f0[:len(mel)]
+    pad_size=(int(len(wav_data) // hparams['hop_size']) - len(f0) + 1) // 2
+    f0 = np.pad(f0,[[pad_size,len(mel) - len(f0) - pad_size]], mode='constant')
     pitch_coarse = f0_to_coarse(f0, hparams)
     return f0, pitch_coarse
 
 
 def get_pitch_crepe(wav_data, mel, hparams, threshold=0.05):
     # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    # device = torch.device("cuda")
-    device = torch.device('cpu')
+    device = torch.device("cuda")
     # crepe只支持16khz采样率，需要重采样
     wav16k = resampy.resample(wav_data, hparams['audio_sample_rate'], 16000)
     wav16k_torch = torch.FloatTensor(wav16k).unsqueeze(0).to(device)

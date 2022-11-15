@@ -1,13 +1,15 @@
+import hashlib
+import json
 import os
 import time
+from io import BytesIO
 
 import librosa
 import numpy as np
 import soundfile
 import torch
 
-import utils as utils
-from io import BytesIO
+import utils
 from modules.fastspeech.pe import PitchExtractor
 from network.diff.candidate_decoder import FFT
 from network.diff.diffusion import GaussianDiffusion
@@ -17,6 +19,32 @@ from preprocessing.data_gen_utils import get_pitch_parselmouth, get_pitch_crepe
 from preprocessing.hubertinfer import Hubertencoder
 from utils.hparams import hparams, set_hparams
 from utils.pitch_utils import denorm_f0, norm_interp_f0
+
+
+def read_temp(file_name):
+    if not os.path.exists(file_name):
+        with open(file_name, "w") as f:
+            f.write(json.dumps({"info": "temp_dict"}))
+        return {}
+    else:
+        with open(file_name, "r") as f:
+            data = f.read()
+        data_dict = json.loads(data)
+        if os.path.getsize(file_name) > 50 * 1024 * 1024:
+            f_name = file_name.split("/")[-1]
+            print(f"clean {f_name}")
+            for wav_hash in list(data_dict.keys()):
+                if int(time.time()) - int(data_dict[wav_hash]["time"]) > 14 * 24 * 3600:
+                    del data_dict[wav_hash]
+        return data_dict
+
+
+f0_dict = read_temp("./diff_svc/infer_tools/f0_temp.json")
+
+
+def write_temp(file_name, data):
+    with open(file_name, "w") as f:
+        f.write(json.dumps(data))
 
 
 def timeit(func):
@@ -40,10 +68,25 @@ def fill_a_to_b(a, b):
             a.append(a[0])
 
 
+def get_end_file(dir_path, end):
+    file_lists = []
+    for root, dirs, files in os.walk(dir_path):
+        files = [f for f in files if f[0] != '.']
+        dirs[:] = [d for d in dirs if d[0] != '.']
+        for f_file in files:
+            if f_file.endswith(end):
+                file_lists.append(os.path.join(root, f_file).replace("\\", "/"))
+    return file_lists
+
+
 def mkdir(paths: list):
     for path in paths:
         if not os.path.exists(path):
             os.mkdir(path)
+
+
+def get_md5(content):
+    return hashlib.new("md5", content).hexdigest()
 
 
 class Svc:
@@ -85,20 +128,24 @@ class Svc:
     def load_ckpt(self, model_name='model', force=True, strict=True):
         utils.load_ckpt(self.model, self.model_path, model_name, force, strict)
 
-    @timeit
-    def infer(self, in_path, key, acc, use_pe=True, use_crepe=True, thre=0.05, **kwargs):
+    def infer(self, in_path, key, acc, use_pe=True, use_crepe=True, thre=0.05, singer=False, **kwargs):
         batch = self.pre(in_path, acc, use_crepe, thre)
         spk_embed = batch.get('spk_embed') if not hparams['use_spk_id'] else batch.get('spk_ids')
         hubert = batch['hubert']
         ref_mels = batch["mels"]
         mel2ph = batch['mel2ph']
         batch['f0'] = batch['f0'] + (key / 12)
+        batch['f0'][batch['f0']>np.log2(hparams['f0_max'])]=0
         f0 = batch['f0']
         uv = batch['uv']
-        outputs = self.model(
-            hubert.cpu(), spk_embed=spk_embed, mel2ph=mel2ph.cpu(), f0=f0.cpu(), uv=uv.cpu(),
-            ref_mels=ref_mels.cpu(),
-            infer=True, **kwargs)
+        @timeit
+        def diff_infer():
+            outputs = self.model(
+                hubert.cpu(), spk_embed=spk_embed, mel2ph=mel2ph.cpu(), f0=f0.cpu(), uv=uv.cpu(),
+                ref_mels=ref_mels.cpu(),
+                infer=True, **kwargs)
+            return outputs
+        outputs=diff_infer()
         batch['outputs'] = self.model.out2mel(outputs['mel_out'])
         batch['mel2ph_pred'] = outputs['mel2ph']
         batch['f0_gt'] = denorm_f0(batch['f0'], batch['uv'], hparams)
@@ -107,10 +154,10 @@ class Svc:
             batch['f0_pred'] = self.pe(outputs['mel_out'])['f0_denorm_pred'].detach()
         else:
             batch['f0_pred'] = outputs.get('f0_denorm')
-        return self.after_infer(batch)
+        return self.after_infer(batch, singer, in_path)
 
     @timeit
-    def after_infer(self, prediction):
+    def after_infer(self, prediction, singer, in_path):
         for k, v in prediction.items():
             if type(v) is torch.Tensor:
                 prediction[k] = v.cpu().numpy()
@@ -132,6 +179,13 @@ class Svc:
             f0_pred = f0_pred[:len(mel_pred_mask)]
         f0_pred = f0_pred[mel_pred_mask]
         torch.cuda.is_available() and torch.cuda.empty_cache()
+
+        if singer:
+            data_path = in_path.replace("batch", "singer_data")
+            mel_path = data_path[:-4] + "_mel.npy"
+            f0_path = data_path[:-4] + "_f0.npy"
+            np.save(mel_path, mel_pred)
+            np.save(f0_path, f0_pred)
         wav_pred = self.vocoder.spec2wav(mel_pred, f0=f0_pred)
         return f0_gt, f0_pred, wav_pred
 
@@ -145,9 +199,19 @@ class Svc:
         @timeit
         def get_pitch(wav, mel):
             # get ground truth f0 by self.get_pitch_algorithm
+            global f0_dict
             if use_crepe:
-                torch.cuda.is_available() and torch.cuda.empty_cache()
-                gt_f0, coarse_f0 = get_pitch_crepe(wav, mel, hparams, thre)  #
+                md5 = get_md5(wav)
+                if f"{md5}_gt" in f0_dict.keys():
+                    print("load temp crepe f0")
+                    gt_f0 = np.array(f0_dict[f"{md5}_gt"]["f0"])
+                    coarse_f0 = np.array(f0_dict[f"{md5}_coarse"]["f0"])
+                else:
+                    torch.cuda.is_available() and torch.cuda.empty_cache()
+                    gt_f0, coarse_f0 = get_pitch_crepe(wav, mel, hparams, thre)
+                f0_dict[f"{md5}_gt"] = {"f0": gt_f0.tolist(), "time": int(time.time())}
+                f0_dict[f"{md5}_coarse"] = {"f0": coarse_f0.tolist(), "time": int(time.time())}
+                write_temp("./diff_svc/infer_tools/f0_temp.json", f0_dict)
             else:
                 gt_f0, coarse_f0 = get_pitch_parselmouth(wav, mel, hparams)
             processed_input['f0'] = gt_f0

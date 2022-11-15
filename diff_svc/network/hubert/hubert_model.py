@@ -222,8 +222,7 @@ def hubert_soft(
     Args:
         path (str): path of a pretrained model
     """
-    # dev = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    dev = 'cpu'
+    dev = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     hubert = HubertSoft()
     checkpoint = torch.load(path)
     consume_prefix_in_state_dict_if_present(checkpoint, "module.")
@@ -241,11 +240,9 @@ def get_units(hbt_soft, raw_wav_path, dev=torch.device('cuda')):
         wav16 = librosa.resample(wav, sr, 16000)
     else:
         wav16 = wav
-    # dev = torch.device("cuda" if (dev == torch.device('cuda') and torch.cuda.is_available()) else "cpu")
-    dev = 'cpu'
+    dev = torch.device("cuda" if (dev == torch.device('cuda') and torch.cuda.is_available()) else "cpu")
     torch.cuda.is_available() and torch.cuda.empty_cache()
     with torch.inference_mode():
-
         units = hbt_soft.units(torch.FloatTensor(wav16.astype(float)).unsqueeze(0).unsqueeze(0).to(dev))
         return units
 

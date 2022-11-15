@@ -15,8 +15,7 @@ from network.vocoders.vocoder_utils import denoise
 
 
 def load_model(config_path, file_path):
-    # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    device = 'cpu'
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     ext = os.path.splitext(file_path)[-1]
     if ext == '.pth':
         if '.yaml' in config_path:
@@ -47,7 +46,6 @@ total_time = 0
 @register_vocoder
 class HifiGAN(PWG):
     def __init__(self):
-        self.device = 'cpu'
         base_dir = hparams['vocoder_ckpt']
         config_path = f'{base_dir}/config.yaml'
         if os.path.exists(config_path):

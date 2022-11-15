@@ -132,4 +132,6 @@ def set_hparams(config='', exp_name='', hparams_str='', print_hparams=True, glob
     hparams['hubert_path'] = 'diff_svc/ckpt/hubert/hubert_soft.pt'
     hparams['pe_ckpt'] = 'diff_svc/ckpt/0102_xiaoma_pe/model_ckpt_steps_60000.ckpt'
     hparams['vocoder_ckpt'] = 'diff_svc/ckpt/0109_hifigan_bigpopcs_hop128'
+    if hparams['vocoder'] == 'network.vocoders.nsf_hifigan.NsfHifiGAN':
+        hparams['vocoder_ckpt'] = 'diff_svc/ckpt/nsf_hifigan/'
     return hparams_

@@ -28,3 +28,9 @@ moe_tts_cpu_beta.spec
 /diff_svc/training/dataset/__pycache__
 /diff_svc/training/task/__pycache__
 /diff_svc/utils/__pycache__
+/diff_svc/ckpt/
+/raw
+/output
+/diff_svc/infer_tools/chunks_temp.json
+/diff_svc/infer_tools/f0_temp.json
+/diff_svc/modules/nsf_hifigan/__pycache__
