@@ -54,7 +54,7 @@ Attitude of this project:
 
 ### Inputs
 
-Mostly you need to input phoneme (In Japanese, it stands for the Roman Tones), but the author of the models can decide other input methods. For exmaple, the ATRI model(Tacotron2 version) supports Roman Tones without spaces only and the commas and the periods only.
+Mostly you need to input phoneme (In Japanese, it stands for the Roman Tones), but the author of the models can decide other input methods. For example, the ATRI model(Tacotron2 version) supports Roman Tones without spaces only and the commas and the periods only.
 
 ### GUI
 
