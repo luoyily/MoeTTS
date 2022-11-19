@@ -184,34 +184,21 @@ x. 模型名
 
    模型类型：VITS多角色
 
-4. 姬野星奏Diff-svc
 
-   描述：姬野星奏的语音转换模型。（以下两个类似）
 
-   模型下载：链接：https://pan.baidu.com/s/1vc7lLpyAjUDCKI_PO5CR6w?pwd=wad5 
-   提取码：wad5
+diff-svc 模型（此类模型无过多信息，以后采用表格整理）：
 
-   模型类型：Diff-SVC
-
-   贡献者：MoeTTS(luoyily)
-
-5. 小鞠由依Diff-svc
-
-   模型下载：链接：https://pan.baidu.com/s/1WwluFplMLjVD9ZeF6qdAxQ?pwd=i4yc 
-   提取码：i4yc
-
-   模型类型：Diff-SVC
-
-   贡献者：MoeTTS(luoyily)
-
-6. ATRI Diff-svc
-
-   模型下载：链接：https://pan.baidu.com/s/1-jc9DSQp_fOv-kdc_4bkyQ?pwd=3jm3 
-   提取码：3jm3
-
-   模型类型：Diff-SVC
-
-   贡献者：RiceCake(https://github.com/gak123) 
+| 模型名称与下载                                               | 备注 | 贡献者                                |
+| ------------------------------------------------------------ | ---- | ------------------------------------- |
+| [姬野星奏](https://pan.baidu.com/s/1vc7lLpyAjUDCKI_PO5CR6w?pwd=wad5) |      | luoyily                               |
+| [小鞠由依](https://pan.baidu.com/s/1WwluFplMLjVD9ZeF6qdAxQ?pwd=i4yc) |      | luoyily                               |
+| [ATRI](https://pan.baidu.com/s/1-jc9DSQp_fOv-kdc_4bkyQ?pwd=3jm3) |      | [RiceCake](https://github.com/gak123) |
+| [鹰仓杏铃](https://pan.baidu.com/s/1aBL3geIXJmb7dfEzi4AF5g?pwd=86aq) |      | luoyily                               |
+| [悠音](https://pan.baidu.com/s/18cG-DX38V8LrnFqy83Mzaw?pwd=riwm) |      | luoyily                               |
+| [锦 明日海](https://pan.baidu.com/s/1ZNMn0hRu2MhNeLwQ9_VZ3Q?pwd=xe57) |      | luoyily                               |
+| [美绘瑠](https://pan.baidu.com/s/1lIXXxiAKShxoLkaXOJCdsw?pwd=7c1v) |      | luoyily                               |
+| [艾拉(可塑性记忆)](https://pan.baidu.com/s/14mQfBOAIllqqanP03c5w0g?pwd=z1im) |      | luoyily                               |
+| [伊莉雅](https://pan.baidu.com/s/14v-XkNtp8pDqXXVjljYFSw?pwd=mvh1) |      | luoyily                               |
 
 ## 常见QA
 
