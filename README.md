@@ -9,12 +9,13 @@ Speech synthesis model repo for galgame characters based on Tacotron2 , Hifigan 
 
 这是一个存放基于Tacotron2，Hifigan，VITS，Diff-SVC的galgame角色语音合成的模型库的仓库。另外也用于发行编译后的推理GUI。
 
+## 声明：禁止使用该项目以及分享的模型以及衍生产物参与Galgame开发（包括非商业游戏）
+
 ## 近期更新
 
-1.2.2-beta:
+1.2.3-beta:
 
-> 1. 修复可能在部分设备上DLL缺失问题。
-> 2. 增加Diff-SVC支持
+> 1. 更新diff-svc(同步diffsvc原项目：支持nsf hifigan,增加Crepe缓存，修复了一些BUG)
 
 GPU 版本将会发布代码（体积问题没有Release版）
 
