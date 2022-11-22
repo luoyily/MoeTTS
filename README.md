@@ -16,6 +16,7 @@ Speech synthesis model repo for galgame characters based on Tacotron2 , Hifigan 
 1.2.3-beta:
 
 > 1. 更新diff-svc(同步diffsvc原项目：支持nsf hifigan,增加Crepe缓存，修复了一些BUG)
+> 2. 11-22：BUG通知，加载输入音频会覆盖原始wav，记得备份。配置文件开启UV可能导致呼吸声与空白异常。下版本修复。
 
 GPU 版本将会发布代码（体积问题没有Release版）
 
