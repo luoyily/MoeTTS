@@ -190,17 +190,20 @@ x. 模型名
 
 diff-svc 模型（此类模型无过多信息，以后采用表格整理）：
 
-| 模型名称与下载                                               | 备注 | 贡献者                                |
-| ------------------------------------------------------------ | ---- | ------------------------------------- |
-| [姬野星奏](https://pan.baidu.com/s/1vc7lLpyAjUDCKI_PO5CR6w?pwd=wad5) |      | luoyily                               |
-| [小鞠由依](https://pan.baidu.com/s/1WwluFplMLjVD9ZeF6qdAxQ?pwd=i4yc) |      | luoyily                               |
-| [ATRI](https://pan.baidu.com/s/1-jc9DSQp_fOv-kdc_4bkyQ?pwd=3jm3) |      | [RiceCake](https://github.com/gak123) |
-| [鹰仓杏铃](https://pan.baidu.com/s/1aBL3geIXJmb7dfEzi4AF5g?pwd=86aq) |      | luoyily                               |
-| [悠音](https://pan.baidu.com/s/18cG-DX38V8LrnFqy83Mzaw?pwd=riwm) |      | luoyily                               |
-| [锦 明日海](https://pan.baidu.com/s/1ZNMn0hRu2MhNeLwQ9_VZ3Q?pwd=xe57) |      | luoyily                               |
-| [美绘瑠](https://pan.baidu.com/s/1lIXXxiAKShxoLkaXOJCdsw?pwd=7c1v) |      | luoyily                               |
-| [艾拉(可塑性记忆)](https://pan.baidu.com/s/14mQfBOAIllqqanP03c5w0g?pwd=z1im) |      | luoyily                               |
-| [伊莉雅](https://pan.baidu.com/s/14v-XkNtp8pDqXXVjljYFSw?pwd=mvh1) |      | luoyily                               |
+| 模型名称与下载                                               | 备注                                                         | 贡献者                                |
+| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------- |
+| [姬野星奏](https://pan.baidu.com/s/1vc7lLpyAjUDCKI_PO5CR6w?pwd=wad5) |                                                              | luoyily                               |
+| [小鞠由依](https://pan.baidu.com/s/1WwluFplMLjVD9ZeF6qdAxQ?pwd=i4yc) |                                                              | luoyily                               |
+| [ATRI](https://pan.baidu.com/s/1-jc9DSQp_fOv-kdc_4bkyQ?pwd=3jm3) |                                                              | [RiceCake](https://github.com/gak123) |
+| [鹰仓杏铃](https://pan.baidu.com/s/1aBL3geIXJmb7dfEzi4AF5g?pwd=86aq) |                                                              | luoyily                               |
+| [悠音](https://pan.baidu.com/s/18cG-DX38V8LrnFqy83Mzaw?pwd=riwm) |                                                              | luoyily                               |
+| [锦 明日海](https://pan.baidu.com/s/1ZNMn0hRu2MhNeLwQ9_VZ3Q?pwd=xe57) |                                                              | luoyily                               |
+| [美绘瑠](https://pan.baidu.com/s/1lIXXxiAKShxoLkaXOJCdsw?pwd=7c1v) |                                                              | luoyily                               |
+| [艾拉(可塑性记忆)](https://pan.baidu.com/s/14mQfBOAIllqqanP03c5w0g?pwd=z1im) |                                                              | luoyily                               |
+| [伊莉雅](https://pan.baidu.com/s/14v-XkNtp8pDqXXVjljYFSw?pwd=mvh1) |                                                              | luoyily                               |
+| [ATRI_44100](https://pan.baidu.com/s/1KV_SiWUdBZjayyUioPhF3w?pwd=q515) | 需要[nsf_hifigan](https://openvpi.github.io/vocoders/)声码器权重 | [RiceCake](https://github.com/gak123) |
+
+注：标注需要nsf_hifigan声码器的模型，在测试期间你可能需要申请openvpi团队的公测版声码器，并放置于```moe_tts_cpu_beta\diff_svc\ckpt\nsf_hifigan```下
 
 ## 常见QA
 
