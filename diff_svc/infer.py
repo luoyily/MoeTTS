@@ -40,8 +40,8 @@ def run_clip(svc_model, key, acc, use_pe, use_crepe, thre, use_gt_mel, add_noise
     f0_tst = []
     f0_pred = []
     audio = []
-    epsilon = 0.0002
-    for data in audio_data:
+
+    for (slice_tag, data) in audio_data:
         print(f'#=====segment start, {round(len(data) / audio_sr, 3)}s======')
         length = int(np.ceil(len(data) / audio_sr * hparams['audio_sample_rate']))
         raw_path = io.BytesIO()
@@ -49,7 +49,7 @@ def run_clip(svc_model, key, acc, use_pe, use_crepe, thre, use_gt_mel, add_noise
         if hparams['debug']:
             print(np.mean(data), np.var(data))
         raw_path.seek(0)
-        if np.var(data) < epsilon:
+        if slice_tag:
             print('jump empty segment')
             _f0_tst, _f0_pred, _audio = (
                 np.zeros(int(np.ceil(length / hparams['hop_size']))), np.zeros(int(np.ceil(length / hparams['hop_size']))),
@@ -59,7 +59,7 @@ def run_clip(svc_model, key, acc, use_pe, use_crepe, thre, use_gt_mel, add_noise
                                                         thre=thre, use_gt_mel=use_gt_mel, add_noise_step=add_noise_step)
         fix_audio = np.zeros(length)
         fix_audio[:] = np.mean(_audio)
-        fix_audio[:len(_audio)] = _audio
+        fix_audio[:len(_audio)] = _audio[0 if len(_audio)<len(fix_audio) else len(_audio)-len(fix_audio):]
         f0_tst.extend(_f0_tst)
         f0_pred.extend(_f0_pred)
         audio.extend(list(fix_audio))

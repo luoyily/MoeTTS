@@ -74,7 +74,7 @@ def set_hparams(config='', exp_name='', hparams_str='', print_hparams=True, glob
     global hparams
     assert args.config != '' or args_work_dir != ''
     saved_hparams = {}
-    if args_work_dir != 'ckpt/':
+    if args_work_dir != 'checkpoints/':
         ckpt_config_path = f'{args_work_dir}/config.yaml'
         if os.path.exists(ckpt_config_path):
             try:
@@ -133,5 +133,5 @@ def set_hparams(config='', exp_name='', hparams_str='', print_hparams=True, glob
     hparams['pe_ckpt'] = 'diff_svc/ckpt/0102_xiaoma_pe/model_ckpt_steps_60000.ckpt'
     hparams['vocoder_ckpt'] = 'diff_svc/ckpt/0109_hifigan_bigpopcs_hop128'
     if hparams['vocoder'] == 'network.vocoders.nsf_hifigan.NsfHifiGAN':
-        hparams['vocoder_ckpt'] = 'diff_svc/ckpt/nsf_hifigan/'
+        hparams['vocoder_ckpt'] = 'diff_svc/ckpt/nsf_hifigan/model'
     return hparams_

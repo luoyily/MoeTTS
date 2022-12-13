@@ -24,19 +24,42 @@ import logging
 numba_logger = logging.getLogger('numba')
 numba_logger.setLevel(logging.WARNING)
 
+# win 10 notice
+try:
+    from win10toast import ToastNotifier
+    toaster = ToastNotifier()
+    is_notice_avaliable = True
+except:
+    is_notice_avaliable = False
 # functions
 
 is_init_model= False
 # Settings
+notice_at_fin = False
 enable_batch_out = False
 enable_custom_filename = False
 vits_length_scale = 1
 
-def file_locate(entry_box, reset_model=False,file_types=None):
+
+def notice():
+    if notice_at_fin and is_notice_avaliable:
+        try:
+            toaster.show_toast("MoeTTS","您的推理任务已完成",icon_path="favicon.ico",duration=3,threaded=True)
+        except:
+            pass
+
+def set_notice_at_fin():
+    global notice_at_fin
+    notice_at_fin = ~ notice_at_fin
+
+def file_locate(entry_box, reset_model=False,file_types=None,locate_files=False):
     global is_init_model
     file = ''
     if file_types:
-        file = filedialog.askopenfilename(initialdir=os.getcwd(),filetypes=file_types)
+        if locate_files:
+            file = '|'.join(filedialog.askopenfilenames(initialdir=os.getcwd(),filetypes=file_types))
+        else:
+            file = filedialog.askopenfilename(initialdir=os.getcwd(),filetypes=file_types)
     else:
         file = filedialog.askopenfilename(initialdir=os.getcwd())
     entry_box.delete(0, 'end')
@@ -196,6 +219,7 @@ def inference_taco(tts_model, hifigan_model, target_text, output):
         synthesis()
     else:
         synthesis()
+    notice()
 # vits
 
 def get_text(text, hps, symbols):
@@ -261,6 +285,7 @@ def inference_vitss(tts_model, target_text, output):
         synthesis()
     else:
         synthesis()
+    notice()
 
 def inference_vitsm(tts_model, target_text, output, speaker_id, mode='synthesis', target_speaker_id=0, src_audio=''):
     """
@@ -359,7 +384,8 @@ def inference_vitsm(tts_model, target_text, output, speaker_id, mode='synthesis'
             synthesis()
         elif mode=='convert':
             convert()
-
+    notice()
+    
 # Main window
 root = tk.Tk()
 root.geometry("760x450")
@@ -694,6 +720,9 @@ file_set_check2.grid(row=1, column=2, padx=5, pady=5)
 file_set_help = ttk.Label(file_setting_group, text='说明：启用批量合成模式后，文本框中以"|"分隔句子后，会批量转换每句到文件夹下以单独文件存放。\
     \n批量转换模式无法自定义文件名。')
 file_set_help.place(x=20, y=50)
+# Notice setting
+notice_set_check = ttk.Checkbutton(file_setting_group, text='启用完成通知', command=lambda:set_notice_at_fin())
+notice_set_check.grid(row=1, column=3, padx=5, pady=5)
 
 # VITS inference settings
 vits_setting_group = ttk.Labelframe(master=setting_tab, text="VITS 语速设定(浮点数, 越大越慢):", padding=15)
@@ -739,21 +768,15 @@ def set_crepe():
 def set_pe():
     global use_pe
     use_pe = ~use_pe
+
 # TODO: 规范代码，规范import
-def diff_svc_infer(model_path,input_file,out_path,tran=0,acc=20):
+def diff_svc_infer(model_path,input_files:list,out_path,tran=0,acc=20):
     global is_init_model,run_clip,Svc,model
     accelerate = acc
     hubert_gpu = False
     project_name = ''
-    # audio_rate = 24000
     model_folder = '/'.join(model_path.split('/')[:-1])
     config_file = (model_folder+'/config.yaml')
-    # with open(config_file) as f:
-    #     cfg_yaml = f.read()
-    #     asr_index = cfg_yaml.find('audio_sample_rate: ')+19
-    #     audio_rate = int(cfg_yaml[asr_index:asr_index+5])
-        # print(cfg_yaml[asr_index:asr_index+5])
-    # model = None
     # 重新选择以及首次加载模型再初始化
     if not is_init_model:
         sys.path.append('./diff_svc/')
@@ -761,10 +784,14 @@ def diff_svc_infer(model_path,input_file,out_path,tran=0,acc=20):
         from diff_svc.infer import run_clip
         model = Svc(project_name, config_file, hubert_gpu, model_path)
         is_init_model = True
-    if not enable_custom_filename:
-        out_path = os.path.join(out_path,f'{input_file.split("/")[-1][:-4]}_key_{tran}.wav')
-    run_clip(model, key=tran, acc=accelerate, use_crepe=use_crepe, thre=0.05, use_pe=use_pe, use_gt_mel=False,
-                add_noise_step=500, f_name=input_file,out_path=out_path)
+    for i,input_file in enumerate(input_files):
+        if not enable_custom_filename:
+            final_out_path = os.path.join(out_path,f'{input_file.split("/")[-1][:-4]}_key_{tran}_{i}.wav')
+        else:
+            final_out_path = out_path
+        run_clip(model, key=tran, acc=accelerate, use_crepe=use_crepe, thre=0.05, use_pe=use_pe, use_gt_mel=False,
+                    add_noise_step=500, f_name=input_file,out_path=final_out_path)
+    notice()
 
 # diff svc gui
 diff_svc_tab = ttk.Frame(nb)
@@ -799,7 +826,7 @@ dsvc_input = ttk.Entry(diff_svc_tab)
 dsvc_input.grid(row=3, column=2, padx=20, pady=5, ipadx=taco_entry_ipadx)
 
 # 点炒饭禁止！
-dsvc_input_btn = ttk.Button(diff_svc_tab, text="浏览文件", bootstyle=(INFO, OUTLINE), command=lambda :file_locate(dsvc_input,file_types=(("wav files", "*.wav"),("ogg files", "*.ogg"),)))
+dsvc_input_btn = ttk.Button(diff_svc_tab, text="浏览文件", bootstyle=(INFO, OUTLINE), command=lambda :file_locate(dsvc_input,file_types=(("wav files", "*.wav"),("ogg files", "*.ogg"),),locate_files=enable_batch_out))
 dsvc_input_btn.grid(row=3, column=3, padx=5, pady=5)
 
 # 变调，Crepe，PE
@@ -828,7 +855,7 @@ dsvc_acc.grid(row=5, column=2, padx=20, pady=5, ipadx=taco_entry_ipadx)
 dsvc_acc.insert(0,'20')
 
 dsvc_input_btn = ttk.Button(diff_svc_tab, text="转换音频", bootstyle=(SECONDARY, OUTLINE), 
-    command=lambda :diff_svc_infer(model_path=dsvc_mp.get(),input_file=dsvc_input.get(), 
+    command=lambda :diff_svc_infer(model_path=dsvc_mp.get(),input_files=dsvc_input.get().split("|"), 
     tran=int(dsvc_pitch.get()),out_path=dsvc_out.get(),acc=int(dsvc_acc.get())))
 dsvc_input_btn.grid(row=4, column=3, padx=5, pady=5)
 
@@ -842,7 +869,44 @@ nb.add(diff_svc_tab, text="Diff-svc", sticky=NW)
 nb.add(tool_tab, text="ToolBox", sticky=NW)
 nb.add(setting_tab, text="Settings", sticky=NW)
 
+# save recent use
+def save_recent_use():
+    try:
+        f = open('recent.json',mode='w',encoding='utf-8')
+        entry_boxes = {
+            "taco_mp":taco_mp.get(),
+            "hg_mp":hg_mp.get(),
+            "taco_out":taco_out.get(),
+            "vitss_mp":vitss_mp.get(),
+            "vitss_out":vitss_out.get(),
+            "vitsm_mp":vitsm_mp.get(),
+            "vitsm_out":vitsm_out.get(),
+            "dsvc_mp":dsvc_mp.get(),
+            "dsvc_out":dsvc_out.get()
+            }
+        json.dump(entry_boxes,f)
+    except:
+        pass
+    root.destroy()
+
+def load_recent_use():
+    f = open('recent.json',mode='r',encoding='utf-8')
+    entry_boxes = json.load(f)
+    taco_mp.insert(0,entry_boxes['taco_mp'])
+    hg_mp.insert(0,entry_boxes['hg_mp'])
+    taco_out.insert(0,entry_boxes['taco_out'])
+    vitss_mp.insert(0,entry_boxes['vitss_mp'])
+    vitss_out.insert(0,entry_boxes['vitss_out'])
+    vitsm_mp.insert(0,entry_boxes['vitsm_mp'])
+    vitsm_out.insert(0,entry_boxes['vitsm_out'])
+    dsvc_mp.insert(0,entry_boxes['dsvc_mp'])
+    dsvc_out.insert(0,entry_boxes['dsvc_out'])
+try:
+    load_recent_use()
+except:
+    pass
 root.resizable(0,0)
+root.protocol('WM_DELETE_WINDOW', save_recent_use)
 root.mainloop()
 # TODO:
 # 添加完成提示，svc批量模式，svc专用配置（适合音域）,最近使用记忆

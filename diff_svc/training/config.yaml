@@ -80,7 +80,7 @@ max_epochs: 3000
 max_eval_sentences: 1
 max_eval_tokens: 60000
 max_frames: 42000
-max_input_tokens: 6000
+max_input_tokens: 60000
 max_sentences: 88
 max_tokens: 128000
 max_updates: 1000000
@@ -333,7 +333,7 @@ use_pos_embed: true
 use_spk_embed: false
 use_spk_id: false
 use_split_spk_id: false
-use_uv: true
+use_uv: false
 use_vec: false
 use_var_enc: false
 val_check_interval: 2000
@@ -346,3 +346,4 @@ wav2spec_eps: 1e-6
 weight_decay: 0
 win_size: 512
 work_dir: checkpoints/atri
+no_fs2: true

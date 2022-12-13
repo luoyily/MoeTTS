@@ -12,8 +12,6 @@ class NsfHifiGAN(BaseVocoder):
             device = 'cuda' if torch.cuda.is_available() else 'cpu'
         self.device = device
         model_path = hparams['vocoder_ckpt']
-        model_file = [f for f in os.listdir(model_path) if '.json' not in f][0]
-        model_path = model_path+model_file
         if os.path.exists(model_path):
             print('| Load HifiGAN: ', model_path)
             self.model, self.h = load_model(model_path, device=self.device)

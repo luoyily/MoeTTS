@@ -3,6 +3,7 @@ import json
 import os
 import time
 from io import BytesIO
+from pathlib import Path
 
 import librosa
 import numpy as np
@@ -20,6 +21,9 @@ from preprocessing.hubertinfer import Hubertencoder
 from utils.hparams import hparams, set_hparams
 from utils.pitch_utils import denorm_f0, norm_interp_f0
 
+if os.path.exists("chunks_temp.json"):
+    os.remove("chunks_temp.json")
+
 
 def read_temp(file_name):
     if not os.path.exists(file_name):
@@ -27,15 +31,20 @@ def read_temp(file_name):
             f.write(json.dumps({"info": "temp_dict"}))
         return {}
     else:
-        with open(file_name, "r") as f:
-            data = f.read()
-        data_dict = json.loads(data)
-        if os.path.getsize(file_name) > 50 * 1024 * 1024:
-            f_name = file_name.split("/")[-1]
-            print(f"clean {f_name}")
-            for wav_hash in list(data_dict.keys()):
-                if int(time.time()) - int(data_dict[wav_hash]["time"]) > 14 * 24 * 3600:
-                    del data_dict[wav_hash]
+        try:
+            with open(file_name, "r") as f:
+                data = f.read()
+            data_dict = json.loads(data)
+            if os.path.getsize(file_name) > 50 * 1024 * 1024:
+                f_name = file_name.split("/")[-1]
+                print(f"clean {f_name}")
+                for wav_hash in list(data_dict.keys()):
+                    if int(time.time()) - int(data_dict[wav_hash]["time"]) > 14 * 24 * 3600:
+                        del data_dict[wav_hash]
+        except Exception as e:
+            print(e)
+            print(f"{file_name} error,auto rebuild file")
+            data_dict = {"info": "temp_dict"}
         return data_dict
 
 
@@ -58,8 +67,10 @@ def timeit(func):
 
 
 def format_wav(audio_path):
-    raw_audio, raw_sample_rate = librosa.load(audio_path, mono=True)
-    soundfile.write(audio_path[:-4] + ".wav", raw_audio, raw_sample_rate)
+    if Path(audio_path).suffix=='.wav':
+        return
+    raw_audio, raw_sample_rate = librosa.load(audio_path, mono=True,sr=None)
+    soundfile.write(Path(audio_path).with_suffix(".wav"), raw_audio, raw_sample_rate)
 
 
 def fill_a_to_b(a, b):
@@ -118,7 +129,6 @@ class Svc:
         self.load_ckpt()
         self.model.cpu()
         hparams['hubert_gpu'] = hubert_gpu
-        hparams['use_uv'] = True
         self.hubert = Hubertencoder(hparams['hubert_path'])
         self.pe = PitchExtractor().cpu()
         utils.load_ckpt(self.pe, hparams['pe_ckpt'], 'model', strict=True)
@@ -133,6 +143,7 @@ class Svc:
         spk_embed = batch.get('spk_embed') if not hparams['use_spk_id'] else batch.get('spk_ids')
         hubert = batch['hubert']
         ref_mels = batch["mels"]
+        energy=batch['energy']
         mel2ph = batch['mel2ph']
         batch['f0'] = batch['f0'] + (key / 12)
         batch['f0'][batch['f0']>np.log2(hparams['f0_max'])]=0
@@ -150,7 +161,6 @@ class Svc:
         batch['mel2ph_pred'] = outputs['mel2ph']
         batch['f0_gt'] = denorm_f0(batch['f0'], batch['uv'], hparams)
         if use_pe:
-            hparams['use_uv'] = True
             batch['f0_pred'] = self.pe(outputs['mel_out'])['f0_denorm_pred'].detach()
         else:
             batch['f0_pred'] = outputs.get('f0_denorm')
@@ -219,7 +229,7 @@ class Svc:
 
         def get_align(mel, phone_encoded):
             mel2ph = np.zeros([mel.shape[0]], int)
-            start_frame = 1
+            start_frame = 0
             ph_durs = mel.shape[0] / phone_encoded.shape[0]
             if hparams['debug']:
                 print(mel.shape, phone_encoded.shape, mel.shape[0] / phone_encoded.shape[0])
