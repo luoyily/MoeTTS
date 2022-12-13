@@ -15,9 +15,10 @@ from utils.hparams import hparams
 chunks_dict = infer_tool.read_temp("./diff_svc/infer_tools/chunks_temp.json")
 
 
-def run_clip(svc_model, key, acc, use_pe, use_crepe, thre, use_gt_mel, add_noise_step,f_name=None,out_path=None,audio_rate=24000):
+def run_clip(svc_model, key, acc, use_pe, use_crepe, thre, use_gt_mel, add_noise_step,f_name=None,out_path=None):
     # 推理前准备（加载缓存，处理音频等）
     use_pe = use_pe if hparams['audio_sample_rate'] == 24000 else False
+    audio_rate = hparams['audio_sample_rate']
     # 转格式
     infer_tool.format_wav(f_name)
     wav_path = Path(f_name).with_suffix('.wav')

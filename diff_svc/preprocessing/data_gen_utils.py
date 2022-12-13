@@ -189,8 +189,8 @@ def get_pitch_parselmouth(wav_data, mel, hparams):
 
 
 def get_pitch_crepe(wav_data, mel, hparams, threshold=0.05):
-    # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    device = torch.device("cuda")
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # device = torch.device("cuda")
     # crepe只支持16khz采样率，需要重采样
     wav16k = resampy.resample(wav_data, hparams['audio_sample_rate'], 16000)
     wav16k_torch = torch.FloatTensor(wav16k).unsqueeze(0).to(device)

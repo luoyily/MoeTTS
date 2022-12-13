@@ -745,13 +745,13 @@ def diff_svc_infer(model_path,input_file,out_path,tran=0,acc=20):
     accelerate = acc
     hubert_gpu = False
     project_name = ''
-    audio_rate = 24000
+    # audio_rate = 24000
     model_folder = '/'.join(model_path.split('/')[:-1])
     config_file = (model_folder+'/config.yaml')
-    with open(config_file) as f:
-        cfg_yaml = f.read()
-        asr_index = cfg_yaml.find('audio_sample_rate: ')+19
-        audio_rate = int(cfg_yaml[asr_index:asr_index+5])
+    # with open(config_file) as f:
+    #     cfg_yaml = f.read()
+    #     asr_index = cfg_yaml.find('audio_sample_rate: ')+19
+    #     audio_rate = int(cfg_yaml[asr_index:asr_index+5])
         # print(cfg_yaml[asr_index:asr_index+5])
     # model = None
     # 重新选择以及首次加载模型再初始化
@@ -764,7 +764,7 @@ def diff_svc_infer(model_path,input_file,out_path,tran=0,acc=20):
     if not enable_custom_filename:
         out_path = os.path.join(out_path,f'{input_file.split("/")[-1][:-4]}_key_{tran}.wav')
     run_clip(model, key=tran, acc=accelerate, use_crepe=use_crepe, thre=0.05, use_pe=use_pe, use_gt_mel=False,
-                add_noise_step=500, f_name=input_file,audio_rate=audio_rate,out_path=out_path)
+                add_noise_step=500, f_name=input_file,out_path=out_path)
 
 # diff svc gui
 diff_svc_tab = ttk.Frame(nb)
@@ -844,3 +844,5 @@ nb.add(setting_tab, text="Settings", sticky=NW)
 
 root.resizable(0,0)
 root.mainloop()
+# TODO:
+# 添加完成提示，svc批量模式，svc专用配置（适合音域）,最近使用记忆
