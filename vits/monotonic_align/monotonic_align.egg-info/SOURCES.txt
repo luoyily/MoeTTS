@@ -1,0 +1,6 @@
+core.c
+setup.py
+monotonic_align.egg-info/PKG-INFO
+monotonic_align.egg-info/SOURCES.txt
+monotonic_align.egg-info/dependency_links.txt
+monotonic_align.egg-info/top_level.txt

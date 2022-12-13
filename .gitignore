@@ -1,0 +1,14 @@
+/jp_g2p
+test.py
+/test
+moe_tts_cpu.spec
+moe_tts_cpu_beta.spec
+/build
+/dist
+/diff_svc/ckpt/
+/raw
+/output
+/diff_svc/infer_tools/chunks_temp.json
+/diff_svc/infer_tools/f0_temp.json
+__pycache__
+recent.json
