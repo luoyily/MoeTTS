@@ -231,6 +231,8 @@ Diff-svc models:
 | [Illya](https://pan.baidu.com/s/14v-XkNtp8pDqXXVjljYFSw?pwd=mvh1) | 24000Hz(infer only) | luoyily                               |
 | [ATRI_44100](https://pan.baidu.com/s/1KV_SiWUdBZjayyUioPhF3w?pwd=q515) | 44100Hz(infer only) | [RiceCake](https://github.com/gak123) |
 
+Note : Most of the above models include only the necessary inference weights, and you may not be able to continue training them directly.
+
 ## FAQ
 
 1. Q: Can this GUI process non-official Tacotron2 models?
