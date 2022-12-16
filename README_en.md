@@ -230,6 +230,7 @@ Diff-svc models:
 | [Isla(Plastic Memories)](https://pan.baidu.com/s/14mQfBOAIllqqanP03c5w0g?pwd=z1im) | 24000Hz(infer only) | luoyily                               |
 | [Illya](https://pan.baidu.com/s/14v-XkNtp8pDqXXVjljYFSw?pwd=mvh1) | 24000Hz(infer only) | luoyily                               |
 | [ATRI_44100](https://pan.baidu.com/s/1KV_SiWUdBZjayyUioPhF3w?pwd=q515) | 44100Hz(infer only) | [RiceCake](https://github.com/gak123) |
+| [Niimi Sora (新海 天)](https://pan.baidu.com/s/1OYBMiHFPOm6fp-EV7JJWbA?pwd=iavq) | 44100Hz(infer only) | [RiceCake](https://github.com/gak123) |
 
 Note : Most of the above models include only the necessary inference weights, and you may not be able to continue training them directly.
 

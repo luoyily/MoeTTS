@@ -209,6 +209,7 @@ diff-svc 模型（此类模型无过多信息，以后采用表格整理）：
 | [艾拉(可塑性记忆)](https://pan.baidu.com/s/14mQfBOAIllqqanP03c5w0g?pwd=z1im) | 24000Hz(仅包含推理) | luoyily                               |
 | [伊莉雅](https://pan.baidu.com/s/14v-XkNtp8pDqXXVjljYFSw?pwd=mvh1) | 24000Hz(仅包含推理) | luoyily                               |
 | [ATRI_44100](https://pan.baidu.com/s/1KV_SiWUdBZjayyUioPhF3w?pwd=q515) | 44100Hz(仅包含推理) | [RiceCake](https://github.com/gak123) |
+| [新海 天](https://pan.baidu.com/s/1OYBMiHFPOm6fp-EV7JJWbA?pwd=iavq) | 44100Hz(仅包含推理) | [RiceCake](https://github.com/gak123) |
 
 注：以上diff-svc模型可能仅包含推理所必要的权重，您可能无法在他们的基础上直接继续训练。
 
