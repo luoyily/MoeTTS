@@ -122,101 +122,17 @@ Integrated into [Huggingface Spaces ](https://huggingface.co/spaces) using  [Gra
 
 ## Model Downloads
 
-Submit models in this model:
-
-x. Model's name
-
-Description: Model of the character xxx
-
-Input method: 
-
-Download address:
-
-Hifigan's Model download address: Optional
-
-More info: Optional
-
-Model type: 
+### TTS models:
 
 
+| Name&Download                                                | Type              | Info                                                         | Input format                                                 |
+| ------------------------------------------------------------ | ----------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| [ATRI](https://pan.baidu.com/s/1itDhrhzw6uZYxB2238BzTQ?pwd=0z3u) | Tacotron2+Hifigan | ATRI - Character's model of *My dear moments*                | Roman tone without spaces. For example: `tozendesu.koseinodesukara.`(You can also use the "jp g2p" tool in the toolbox to help convert text) |
+| [ATRI-VITS](https://pan.baidu.com/s/1_vhOx50OE5R4bE02ZMe9GA?pwd=9jo4) | VITS Single       | ATRI - Character's model of *My dear moments*                | Japanese text converted by "jp g2p - 调形标注+替换ts" in the toolbox |
+| [13 Galgame characters](https://pan.baidu.com/s/1anZ3eusmG8BVhrQQrvlkug?pwd=0i9r) | VITS Multi        | Speakers: 0:Takakura Anri, 1:Takakura Anzu, 2:Apeiria, 3:Kurashina Asuka, 4:ATRI, 5:ISLA, 6:Shindou Ayane, 7:Himeno Sena, 8:Komari Yui, 9:Miyohashi Koori, 10:Arisaka Mashiro, 11:Sirosaki Mieru, 12:Nikaidou Shinku | Japanese text converted by "jp g2p - 调形标注+替换ts" in the toolbox |
+| [Mori](https://pan.baidu.com/s/1ekfczPolJRNjqVDNgjTJSA?pwd=rm1v) | VITS Single       | Mori - Character's model of *Fox Hime Zero*                  | Japanese text converted by "jp g2p - 普通转换" in the toolbox |
 
-1. ATRI
-
-   Description:  ATRI - Character's model of *My dear moments* 
-
-   Input method: Roman tone without spaces. Only English comma or period accepted. Choose basic_cleaners for the Cleaners option. For example: `tozendesu.koseinodesukara.`
-
-   Download Address: https://pan.baidu.com/s/1itDhrhzw6uZYxB2238BzTQ?pwd=0z3u
-   
-   Passcode: 0z3u
-   
-   More info: Trained with 1300 in game voices. About 600 Epoch.
-   
-   Model type: Tacotron2+hifigan
-   
-2. ATRI-VITS
-
-   Description:  ATRI - Character's model of *My dear moments* 
-
-   Input method: Japanese text converted by "jp g2p - 调形标注+替换ts" in the toolbox
-
-   Download Address: https://pan.baidu.com/s/1_vhOx50OE5R4bE02ZMe9GA?pwd=9jo4 
-
-   Passcode:9jo4 
-
-   Model type: VITS Single
-
-3. 13 Galgame characters
-
-   Description: models of 13 characters from several galgames
-
-   Input method: Japanese text converted by "jp g2p - 调形标注+替换ts" in the toolbox
-
-   Download Address(old version 200Epoch):
-
-   https://pan.baidu.com/s/1fzpC_2YEISvahUzX1iYboA?pwd=yde8 
-
-   Passcode: yde8
-
-   Download Address(fix version 700Epoch):
-
-   https://pan.baidu.com/s/1anZ3eusmG8BVhrQQrvlkug?pwd=0i9r 
-Passcode：0i9r
-   
-
-Details:
-
-​	Speakers: 
-
-​	0 Takakura Anri
-
-​	1 Takakura Anzu 
-
-​	2 Apeiria 
-
-​	3 Kurashina Asuka
-
-​	4 ATRI 
-
-​	5  ISLA
-
-​	6 Shindou Ayane
-
-​	7 Himeno Sena
-
-​	8 Komari Yui
-
-​	9 Miyohashi Koori 
-
-   ​	10 Arisaka Mashiro
-
-   ​	11 Sirosaki Mieru
-
-   ​	12 Nikaidou Shinku
-
-   Model type: VITS Multi
-
-Diff-svc models:
+### Diff-svc models:
 
 | Name&Download                                                | Notes               | Trainer                               |
 | ------------------------------------------------------------ | ------------------- | ------------------------------------- |

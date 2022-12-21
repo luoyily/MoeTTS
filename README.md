@@ -125,77 +125,16 @@ Integrated into [Huggingface Spaces ](https://huggingface.co/spaces) using  [Gra
 
 ## 模型下载
 
-提交格式参考：
+### TTS：
 
-x. 模型名
+| 模型名与下载                                                 | 类型              | 描述                                                         | 输入格式                                                     |
+| ------------------------------------------------------------ | ----------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| [ATRI](https://pan.baidu.com/s/1itDhrhzw6uZYxB2238BzTQ?pwd=0z3u) | Tacotron2+Hifigan | 游戏 ATRI- My dear moments 的角色ATRI模型                    | 无空格罗马音，标点可保留英文逗号句号。例如：`tozendesu.koseinodesukara.`也可使用工具箱日语g2p（普通转换） |
+| [ATRI-VITS](https://pan.baidu.com/s/1_vhOx50OE5R4bE02ZMe9GA?pwd=9jo4) | VITS 单角色       | 游戏 ATRI- My dear moments 的角色ATRI模型                    | 工具箱中的日语g2p(调形标注+ts替换)                           |
+| [Galgame 13位角色](https://pan.baidu.com/s/1anZ3eusmG8BVhrQQrvlkug?pwd=0i9r) | VITS 多角色       | 包含以下角色（游戏名略）：0 杏璃 1 杏铃 2 Apeiria 3 明日香 4 ATRI 5 艾拉 6 彩音 7 星奏 8 由依 9 冰织 10 真白 11 美绘瑠 12 二阶堂真红 | 工具箱中的日语g2p(调形标注+ts替换)                           |
+| [Mori](https://pan.baidu.com/s/1ekfczPolJRNjqVDNgjTJSA?pwd=rm1v) | VITS 单角色       | 游戏 Fox Hime Zero 角色 茉莉                                 | 工具箱中的日语g2p(调形标注)                                  |
 
-描述：角色xxx的模型
-
-模型输入：
-
-下载地址：
-
-配套Hifigan模型下载：选填
-
-详细信息：选填
-
-模型类型：
-
-
-
-1. ATRI
-
-   描述：游戏 ATRI- My dear moments 的角色ATRI模型
-
-   模型输入：无空格罗马音，标点可保留英文逗号句号。例如：`tozendesu.koseinodesukara.`
-
-   模型下载：链接：https://pan.baidu.com/s/1itDhrhzw6uZYxB2238BzTQ?pwd=0z3u 
-提取码：0z3u
-   
-   详细信息：从游戏中选择1300条语音训练，训练约600 Epoch，训练时罗马音使用Bing翻译API
-   
-   模型类型：Tacotron2+Hifigan
-   
-2. ATRI-VITS
-
-   描述：游戏 ATRI- My dear moments 的角色ATRI模型
-
-   模型输入：带有分词与调形标注的罗马音，标点符号可使用`,.?!`。可使用工具箱中的日语g2p(调形标注+ts替换)
-
-   模型下载：
-
-   链接：https://pan.baidu.com/s/1_vhOx50OE5R4bE02ZMe9GA?pwd=9jo4 
-   提取码：9jo4
-
-   详细信息：使用VITS训练约 900 Epoch。
-
-   模型类型：VITS
-
-3. Galgame 13位角色
-
-   描述：来自多个galgame的13位角色的模型
-
-   模型输入：带有分词与调形标注的罗马音，标点符号可使用`,.?!`。可使用工具箱中的日语g2p(调形标注+ts替换)
-
-   模型下载（旧版200Epoch）：
-
-   链接：https://pan.baidu.com/s/1fzpC_2YEISvahUzX1iYboA?pwd=yde8 
-   提取码：yde8
-   
-   模型下载（新版700Epoch）：
-   
-   https://pan.baidu.com/s/1anZ3eusmG8BVhrQQrvlkug?pwd=0i9r 
-   提取码：0i9r
-
-详细信息：
-
-​	角色表：0 杏璃 1 杏铃 2 Apeiria 3 明日香 4 ATRI 5 艾拉 6 彩音 7 星奏 8 由依 9 冰织 10 真白 11 美绘瑠 12 二阶堂真红
-
-   模型类型：VITS多角色
-
-
-
-diff-svc 模型（此类模型无过多信息，以后采用表格整理）：
+### Diff-svc
 
 | 模型名称与下载                                               | 备注                | 贡献者                                |
 | ------------------------------------------------------------ | ------------------- | ------------------------------------- |
