@@ -134,19 +134,21 @@ Integrated into [Huggingface Spaces ](https://huggingface.co/spaces) using  [Gra
 
 ### Diff-svc models:
 
-| Name&Download                                                | Notes               | Trainer                               |
-| ------------------------------------------------------------ | ------------------- | ------------------------------------- |
-| [Himeno Sena](https://pan.baidu.com/s/1vc7lLpyAjUDCKI_PO5CR6w?pwd=wad5) | 24000Hz(infer only) | luoyily                               |
-| [Komari Yui](https://pan.baidu.com/s/1WwluFplMLjVD9ZeF6qdAxQ?pwd=i4yc) | 24000Hz(infer only) | luoyily                               |
-| [ATRI](https://pan.baidu.com/s/1-jc9DSQp_fOv-kdc_4bkyQ?pwd=3jm3) | 24000Hz(infer only) | [RiceCake](https://github.com/gak123) |
-| [Takakura Anzu](https://pan.baidu.com/s/1aBL3geIXJmb7dfEzi4AF5g?pwd=86aq) | 24000Hz(infer only) | luoyily                               |
-| [Yune](https://pan.baidu.com/s/18cG-DX38V8LrnFqy83Mzaw?pwd=riwm) | 24000Hz(infer only) | luoyily                               |
-| [Nishiki Asumi](https://pan.baidu.com/s/1ZNMn0hRu2MhNeLwQ9_VZ3Q?pwd=xe57) | 24000Hz(infer only) | luoyily                               |
-| [Sirosaki mieru](https://pan.baidu.com/s/1lIXXxiAKShxoLkaXOJCdsw?pwd=7c1v) | 24000Hz(infer only) | luoyily                               |
-| [Isla(Plastic Memories)](https://pan.baidu.com/s/14mQfBOAIllqqanP03c5w0g?pwd=z1im) | 24000Hz(infer only) | luoyily                               |
-| [Illya](https://pan.baidu.com/s/14v-XkNtp8pDqXXVjljYFSw?pwd=mvh1) | 24000Hz(infer only) | luoyily                               |
-| [ATRI_44100](https://pan.baidu.com/s/1KV_SiWUdBZjayyUioPhF3w?pwd=q515) | 44100Hz(infer only) | [RiceCake](https://github.com/gak123) |
-| [Niimi Sora (新海 天)](https://pan.baidu.com/s/1OYBMiHFPOm6fp-EV7JJWbA?pwd=iavq) | 44100Hz(infer only) | [RiceCake](https://github.com/gak123) |
+| Name&Download                                                | Notes                           | Trainer                               |
+| ------------------------------------------------------------ | ------------------------------- | ------------------------------------- |
+| [Himeno Sena](https://pan.baidu.com/s/1vc7lLpyAjUDCKI_PO5CR6w?pwd=wad5) | 24000Hz(infer only)             | luoyily                               |
+| [Komari Yui](https://pan.baidu.com/s/1WwluFplMLjVD9ZeF6qdAxQ?pwd=i4yc) | 24000Hz(infer only)             | luoyily                               |
+| [ATRI](https://pan.baidu.com/s/1-jc9DSQp_fOv-kdc_4bkyQ?pwd=3jm3) | 24000Hz(infer only)             | [RiceCake](https://github.com/gak123) |
+| [Takakura Anzu](https://pan.baidu.com/s/1aBL3geIXJmb7dfEzi4AF5g?pwd=86aq) | 24000Hz(infer only)             | luoyily                               |
+| [Yune](https://pan.baidu.com/s/18cG-DX38V8LrnFqy83Mzaw?pwd=riwm) | 24000Hz(infer only)             | luoyily                               |
+| [Nishiki Asumi](https://pan.baidu.com/s/1ZNMn0hRu2MhNeLwQ9_VZ3Q?pwd=xe57) | 24000Hz(infer only)             | luoyily                               |
+| [Sirosaki mieru](https://pan.baidu.com/s/1lIXXxiAKShxoLkaXOJCdsw?pwd=7c1v) | 24000Hz(infer only)             | luoyily                               |
+| [Isla(Plastic Memories)](https://pan.baidu.com/s/14mQfBOAIllqqanP03c5w0g?pwd=z1im) | 24000Hz(infer only)             | luoyily                               |
+| [Illya](https://pan.baidu.com/s/14v-XkNtp8pDqXXVjljYFSw?pwd=mvh1) | 24000Hz(infer only)             | luoyily                               |
+| [ATRI_44100](https://pan.baidu.com/s/1KV_SiWUdBZjayyUioPhF3w?pwd=q515) | 44100Hz(infer only)             | [RiceCake](https://github.com/gak123) |
+| [Niimi Sora (新海 天)](https://pan.baidu.com/s/1OYBMiHFPOm6fp-EV7JJWbA?pwd=iavq) | 44100Hz(infer only)             | [RiceCake](https://github.com/gak123) |
+| [Mori](https://pan.baidu.com/s/15FsM-NM6XXhGCb8MAzp05w?pwd=5mcg) | 44100Hz(infer only)             | luoyily                               |
+| [Kurashina Asuka(beta)](https://pan.baidu.com/s/1saGS166ty3JvcwPa_xwKNw?pwd=hrqx) | 44100Hz(full weight+infer only) | luoyily                               |
 
 Note : Most of the above models include only the necessary inference weights, and you may not be able to continue training them directly.
 
