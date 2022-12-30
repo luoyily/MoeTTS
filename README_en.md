@@ -146,9 +146,14 @@ Integrated into [Huggingface Spaces ](https://huggingface.co/spaces) using  [Gra
 | [Isla(Plastic Memories)](https://pan.baidu.com/s/14mQfBOAIllqqanP03c5w0g?pwd=z1im) | 24000Hz(infer only)             | luoyily                               |
 | [Illya](https://pan.baidu.com/s/14v-XkNtp8pDqXXVjljYFSw?pwd=mvh1) | 24000Hz(infer only)             | luoyily                               |
 | [ATRI_44100](https://pan.baidu.com/s/1KV_SiWUdBZjayyUioPhF3w?pwd=q515) | 44100Hz(infer only)             | [RiceCake](https://github.com/gak123) |
-| [Niimi Sora (新海 天)](https://pan.baidu.com/s/1OYBMiHFPOm6fp-EV7JJWbA?pwd=iavq) | 44100Hz(infer only)             | [RiceCake](https://github.com/gak123) |
-| [Mori](https://pan.baidu.com/s/15FsM-NM6XXhGCb8MAzp05w?pwd=5mcg) | 44100Hz(infer only)             | luoyily                               |
-| [Kurashina Asuka(beta)](https://pan.baidu.com/s/1saGS166ty3JvcwPa_xwKNw?pwd=hrqx) | 44100Hz(full weight+infer only) | luoyily                               |
+| [Niimi Sora](https://pan.baidu.com/s/1OYBMiHFPOm6fp-EV7JJWbA?pwd=iavq) | 44100Hz(infer only)             | [RiceCake](https://github.com/gak123) |
+| Mori [BaiduNetdisk](https://pan.baidu.com/s/15FsM-NM6XXhGCb8MAzp05w?pwd=5mcg) [hugging face](https://huggingface.co/loyi/moetts/tree/main/diff_svc/mori) | 44100Hz(infer only) | luoyily                               |
+| Kurashina Asuka [BaiduNetdisk](https://pan.baidu.com/s/1saGS166ty3JvcwPa_xwKNw?pwd=hrqx) [hugging face](https://huggingface.co/loyi/moetts/tree/main/diff_svc/asuka441) | 44100Hz(infer only+full weight) | luoyily                               |
+| [Arihara Nanami](https://pan.baidu.com/s/1sgshGvHc9Y8IGmSrgWTJHg?pwd=zr76) | 44100Hz(infer only) | [RiceCake](https://github.com/gak123) |
+| [Nikaidou Shinku](https://pan.baidu.com/s/1uBiAEr-YB4pi-W_cn3U3gg?pwd=yuf8) | 44100Hz(infer only) | [RiceCake](https://github.com/gak123) |
+| Himeno Sena [BaiduNetdisk](https://pan.baidu.com/s/1DZlPNTErn91Si4FPkplbEQ?pwd=k603) [hugging face](https://huggingface.co/loyi/moetts/tree/main/diff_svc/sena441) | 44100Hz(infer only) | luoyily                               |
+| Sirosaki Mieru [BaiduNetdisk](https://pan.baidu.com/s/1WJE5JY-rTBdPaId-nnY1Gg?pwd=kv72) [hugging face](https://huggingface.co/loyi/moetts/tree/main/diff_svc/mieru441) | 44100Hz(infer only) | luoyily |
+
 
 Note : Most of the above models include only the necessary inference weights, and you may not be able to continue training them directly.
 

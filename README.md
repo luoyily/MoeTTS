@@ -144,13 +144,17 @@ Integrated into [Huggingface Spaces ](https://huggingface.co/spaces) using  [Gra
 | [鹰仓杏铃](https://pan.baidu.com/s/1aBL3geIXJmb7dfEzi4AF5g?pwd=86aq) | 24000Hz(仅包含推理)          | luoyily                               |
 | [悠音](https://pan.baidu.com/s/18cG-DX38V8LrnFqy83Mzaw?pwd=riwm) | 24000Hz(仅包含推理)          | luoyily                               |
 | [锦 明日海](https://pan.baidu.com/s/1ZNMn0hRu2MhNeLwQ9_VZ3Q?pwd=xe57) | 24000Hz(仅包含推理)          | luoyily                               |
-| [美绘瑠](https://pan.baidu.com/s/1lIXXxiAKShxoLkaXOJCdsw?pwd=7c1v) | 24000Hz(仅包含推理)          | luoyily                               |
+| [白咲美绘瑠](https://pan.baidu.com/s/1lIXXxiAKShxoLkaXOJCdsw?pwd=7c1v) | 24000Hz(仅包含推理)          | luoyily                               |
 | [艾拉(可塑性记忆)](https://pan.baidu.com/s/14mQfBOAIllqqanP03c5w0g?pwd=z1im) | 24000Hz(仅包含推理)          | luoyily                               |
 | [伊莉雅](https://pan.baidu.com/s/14v-XkNtp8pDqXXVjljYFSw?pwd=mvh1) | 24000Hz(仅包含推理)          | luoyily                               |
 | [ATRI_44100](https://pan.baidu.com/s/1KV_SiWUdBZjayyUioPhF3w?pwd=q515) | 44100Hz(仅包含推理)          | [RiceCake](https://github.com/gak123) |
 | [新海 天](https://pan.baidu.com/s/1OYBMiHFPOm6fp-EV7JJWbA?pwd=iavq) | 44100Hz(仅包含推理)          | [RiceCake](https://github.com/gak123) |
-| [茉莉](https://pan.baidu.com/s/15FsM-NM6XXhGCb8MAzp05w?pwd=5mcg) | 44100Hz(仅包含推理)          | luoyily                               |
-| [仓科明日香(训练中版本)](https://pan.baidu.com/s/1saGS166ty3JvcwPa_xwKNw?pwd=hrqx) | 44100Hz(完整权重+仅推理权重) | luoyily                               |
+| 茉莉 [百度网盘](https://pan.baidu.com/s/15FsM-NM6XXhGCb8MAzp05w?pwd=5mcg) [hugging face](https://huggingface.co/loyi/moetts/tree/main/diff_svc/mori) | 44100Hz(仅包含推理)          | luoyily                               |
+| 仓科明日香 [百度网盘](https://pan.baidu.com/s/1saGS166ty3JvcwPa_xwKNw?pwd=hrqx) [hugging face](https://huggingface.co/loyi/moetts/tree/main/diff_svc/asuka441) | 44100Hz(完整权重+仅推理权重) | luoyily                               |
+| [在原七海](https://pan.baidu.com/s/1sgshGvHc9Y8IGmSrgWTJHg?pwd=zr76) | 44100Hz(仅包含推理)          | [RiceCake](https://github.com/gak123) |
+| [二阶堂真红](https://pan.baidu.com/s/1uBiAEr-YB4pi-W_cn3U3gg?pwd=yuf8) | 44100Hz(仅包含推理)          | [RiceCake](https://github.com/gak123) |
+| 姬野星奏 [百度网盘](https://pan.baidu.com/s/1DZlPNTErn91Si4FPkplbEQ?pwd=k603) [hugging face](https://huggingface.co/loyi/moetts/tree/main/diff_svc/sena441) | 44100Hz(仅包含推理)          | luoyily                               |
+| 白咲美绘瑠 [百度网盘](https://pan.baidu.com/s/1WJE5JY-rTBdPaId-nnY1Gg?pwd=kv72) [hugging face](https://huggingface.co/loyi/moetts/tree/main/diff_svc/mieru441) | 44100Hz(仅包含推理)          | luoyily                               |
 
 注：以上diff-svc模型可能仅包含推理所必要的权重，您可能无法在他们的基础上直接继续训练。
 
