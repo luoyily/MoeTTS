@@ -9,8 +9,9 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as t_func
 from torch.nn.modules.utils import consume_prefix_in_state_dict_if_present
+from scipy import signal
 
-from utils import hparams
+from diff_svc.utils import hparams
 
 
 class Hubert(nn.Module):
@@ -237,7 +238,8 @@ def get_units(hbt_soft, raw_wav_path, dev=torch.device('cuda')):
     if len(wav.shape) > 1:
         wav = librosa.to_mono(wav)
     if sr != 16000:
-        wav16 = librosa.resample(wav, sr, 16000)
+        wav16 = librosa.resample(wav, sr, 16000,res_type='fft')
+        # wav16 = signal.resample(wav,int(len(wav)/(sr/16000)))
     else:
         wav16 = wav
     dev = torch.device("cuda" if (dev == torch.device('cuda') and torch.cuda.is_available()) else "cpu")

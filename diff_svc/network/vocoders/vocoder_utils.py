@@ -1,6 +1,6 @@
 import librosa
 
-from utils.hparams import hparams
+from diff_svc.utils.hparams import hparams
 import numpy as np
 
 

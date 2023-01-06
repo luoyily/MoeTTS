@@ -7,7 +7,7 @@
 import librosa
 import torch
 
-from modules.parallel_wavegan.losses import LogSTFTMagnitudeLoss, SpectralConvergengeLoss, stft
+from diff_svc.modules.parallel_wavegan.losses import LogSTFTMagnitudeLoss, SpectralConvergengeLoss, stft
 
 
 class STFTLoss(torch.nn.Module):

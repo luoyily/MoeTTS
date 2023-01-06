@@ -6,22 +6,25 @@ import numpy as np
 import soundfile
 import librosa
 
-from infer_tools import infer_tool
-from infer_tools import slicer
-from infer_tools.infer_tool import Svc
-from utils.hparams import hparams
+from diff_svc.infer_tools import infer_tool
+from diff_svc.infer_tools import slicer
+from diff_svc.infer_tools.infer_tool import Svc
+from diff_svc.utils.hparams import hparams
 
 
 chunks_dict = infer_tool.read_temp("./diff_svc/infer_tools/chunks_temp.json")
 
 
-def run_clip(svc_model, key, acc, use_pe, use_crepe, thre, use_gt_mel, add_noise_step,f_name=None,out_path=None):
+def run_clip(svc_model, key, acc, use_pe, use_crepe, thre, use_gt_mel, add_noise_step,f_name=None,out_path=None,use_crepe_tiny=False):
+    # 将是否使用crepe tiny加入hparams
+    hparams['use_crepe_tiny'] = use_crepe_tiny
     # 推理前准备（加载缓存，处理音频等）
     use_pe = use_pe if hparams['audio_sample_rate'] == 24000 else False
     audio_rate = hparams['audio_sample_rate']
     # 转格式
     infer_tool.format_wav(f_name)
-    wav_path = Path(f_name).with_suffix('.wav')
+    # 部分设备可能导致sound file读取异常，故加上str
+    wav_path = str(Path(f_name).with_suffix('.wav'))
     # 检查缓存
     global chunks_dict
     audio, sr = librosa.load(wav_path, mono=True)

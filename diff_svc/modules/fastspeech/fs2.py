@@ -1,10 +1,10 @@
-from modules.commons.common_layers import *
-from modules.commons.common_layers import Embedding
-from modules.fastspeech.tts_modules import FastspeechDecoder, DurationPredictor, LengthRegulator, PitchPredictor, \
+from diff_svc.modules.commons.common_layers import *
+from diff_svc.modules.commons.common_layers import Embedding
+from diff_svc.modules.fastspeech.tts_modules import FastspeechDecoder, DurationPredictor, LengthRegulator, PitchPredictor, \
     EnergyPredictor, FastspeechEncoder
-from utils.cwt import cwt2f0
-from utils.hparams import hparams
-from utils.pitch_utils import f0_to_coarse, denorm_f0, norm_f0
+from diff_svc.utils.cwt import cwt2f0
+from diff_svc.utils.hparams import hparams
+from diff_svc.utils.pitch_utils import f0_to_coarse, denorm_f0, norm_f0
 
 FS_ENCODERS = {
     'fft': lambda hp: FastspeechEncoder(

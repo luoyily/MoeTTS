@@ -225,12 +225,12 @@ def inference_taco(tts_model, hifigan_model, target_text, output):
 def get_text(text, hps, symbols):
     text_norm = text_to_sequence(text, symbols)
     if hps.data.add_blank:
-        text_norm = commons.intersperse(text_norm, 0)
+        text_norm = vits_commons.intersperse(text_norm, 0)
     text_norm = torch.LongTensor(text_norm)
     return text_norm
 
 def inference_vitss(tts_model, target_text, output):
-    global hps, net_g, torch, SynthesizerTrn, symbols, text_to_sequence, commons
+    global hps, net_g, torch, SynthesizerTrn, symbols, text_to_sequence, vits_commons
     global is_init_model
     def synthesis():
         text_list = [target_text]
@@ -256,7 +256,7 @@ def inference_vitss(tts_model, target_text, output):
     if not is_init_model:
         # init model
         import torch
-        import vits.commons as commons
+        import vits.commons as vits_commons
         import vits.utils
         from vits.models import SynthesizerTrn
         # sys.path.append('./custom/')
@@ -292,7 +292,7 @@ def inference_vitsm(tts_model, target_text, output, speaker_id, mode='synthesis'
     :params
     mode: synthesis, convert
     """
-    global hps, net_g, torch, SynthesizerTrn, symbols, text_to_sequence, commons
+    global hps, net_g, torch, SynthesizerTrn, symbols, text_to_sequence, vits_commons
     global is_init_model
     global spectrogram_torch, load_wav_to_torch
     def convert():
@@ -342,7 +342,7 @@ def inference_vitsm(tts_model, target_text, output, speaker_id, mode='synthesis'
                         write(os.path.join(output,'output_vitsm.wav'), 22050, audio)
     if not is_init_model:
         import torch
-        import vits.commons as commons
+        import vits.commons as vits_commons
         import vits.utils
         from vits.models import SynthesizerTrn
         

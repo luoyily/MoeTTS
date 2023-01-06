@@ -1,13 +1,12 @@
-import tensorflow as tf
-import sys
-# sys.path.append('./custom/')
-# from tacotext import symbols
-
-
-def create_hparams(hparams_string=None, verbose=False):
+class HParamObj:
+    def __init__(self,**kwargs) -> None:
+        for k, v in kwargs.items():
+            self.__setattr__(k,v)
+        
+def create_hparams():
     """Create model hyperparameters. Parse nondefault from given string."""
 
-    hparams = tf.contrib.training.HParams(
+    hparams = HParamObj(
         ################################
         # Experiment Parameters        #
         ################################
@@ -87,12 +86,4 @@ def create_hparams(hparams_string=None, verbose=False):
         mask_padding=True  # set model's padded outputs to padded values
     )
 
-    if hparams_string:
-        tf.logging.info('Parsing command line hparams: %s', hparams_string)
-        hparams.parse(hparams_string)
-
-    if verbose:
-        tf.logging.info('Final parsed hparams: %s', hparams.values())
-
     return hparams
-

@@ -1,7 +1,4 @@
-import subprocess
-import matplotlib
 
-matplotlib.use('Agg')
 import librosa
 import librosa.filters
 import numpy as np

@@ -7,10 +7,10 @@ import torch.nn.functional as F
 from torch import nn
 from tqdm import tqdm
 
-from modules.fastspeech.fs2 import FastSpeech2
+from diff_svc.modules.fastspeech.fs2 import FastSpeech2
 # from modules.diffsinger_midi.fs2 import FastSpeech2MIDI
-from utils.hparams import hparams
-from training.train_pipeline import Batch2Loss
+from diff_svc.utils.hparams import hparams
+from diff_svc.training.train_pipeline import Batch2Loss
 
 
 def exists(x):

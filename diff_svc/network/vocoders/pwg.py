@@ -5,12 +5,14 @@ import torch
 import yaml
 from sklearn.preprocessing import StandardScaler
 from torch import nn
-from modules.parallel_wavegan.models import ParallelWaveGANGenerator
-from modules.parallel_wavegan.utils import read_hdf5
-from utils.hparams import hparams
-from utils.pitch_utils import f0_to_coarse
-from network.vocoders.base_vocoder import BaseVocoder, register_vocoder
 import numpy as np
+
+from diff_svc.modules.parallel_wavegan.models import ParallelWaveGANGenerator
+from diff_svc.modules.parallel_wavegan.utils import read_hdf5
+from diff_svc.utils.hparams import hparams
+from diff_svc.utils.pitch_utils import f0_to_coarse
+from diff_svc.network.vocoders.base_vocoder import BaseVocoder, register_vocoder
+
 
 
 def load_pwg_model(config_path, checkpoint_path, stats_path):
@@ -104,7 +106,7 @@ class PWG(BaseVocoder):
 
     @staticmethod
     def wav2spec(wav_fn, return_linear=False):
-        from preprocessing.data_gen_utils import process_utterance
+        from diff_svc.preprocessing.data_gen_utils import process_utterance
         res = process_utterance(
             wav_fn, fft_size=hparams['fft_size'],
             hop_size=hparams['hop_size'],
@@ -127,7 +129,7 @@ class PWG(BaseVocoder):
         hop_size = hparams['hop_size']
         win_length = hparams['win_size']
         sample_rate = hparams['audio_sample_rate']
-        wav, _ = librosa.core.load(wav_fn, sr=sample_rate)
+        wav, _ = librosa.core.load(wav_fn, sr=sample_rate, res_type='fft')
         mfcc = librosa.feature.mfcc(y=wav, sr=sample_rate, n_mfcc=13,
                                     n_fft=fft_size, hop_length=hop_size,
                                     win_length=win_length, pad_mode="constant", power=1.0)

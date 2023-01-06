@@ -5,7 +5,7 @@ import numpy as np
 import torch
 import torch.utils.data
 
-import vits.commons as commons 
+import vits.commons as vits_commons 
 from vits.mel_processing import spectrogram_torch
 from vits.utils import load_wav_to_torch, load_filepaths_and_text
 
@@ -89,7 +89,7 @@ class TextAudioLoader(torch.utils.data.Dataset):
         else:
             text_norm = text_to_sequence(text, self.text_cleaners)
         if self.add_blank:
-            text_norm = commons.intersperse(text_norm, 0)
+            text_norm = vits_commons.intersperse(text_norm, 0)
         text_norm = torch.LongTensor(text_norm)
         return text_norm
 
@@ -227,7 +227,7 @@ class TextAudioSpeakerLoader(torch.utils.data.Dataset):
         else:
             text_norm = text_to_sequence(text, self.text_cleaners)
         if self.add_blank:
-            text_norm = commons.intersperse(text_norm, 0)
+            text_norm = vits_commons.intersperse(text_norm, 0)
         text_norm = torch.LongTensor(text_norm)
         return text_norm
 

@@ -17,9 +17,9 @@ import webrtcvad
 from scipy.ndimage.morphology import binary_dilation
 from skimage.transform import resize
 
-from utils import audio
-from utils.pitch_utils import f0_to_coarse
-from utils.text_encoder import TokenTextEncoder
+from diff_svc.utils import audio
+from diff_svc.utils.pitch_utils import f0_to_coarse
+from diff_svc.utils.text_encoder import TokenTextEncoder
 
 warnings.filterwarnings("ignore")
 PUNCS = '!,.?;:'
@@ -40,7 +40,7 @@ def trim_long_silences(path, sr=None, return_raw_wav=False, norm=True, vad_max_s
     # Window size of the VAD. Must be either 10, 20 or 30 milliseconds.
     # This sets the granularity of the VAD. Should not need to be changed.
     sampling_rate = 16000
-    wav_raw, sr = librosa.core.load(path, sr=sr)
+    wav_raw, sr = librosa.core.load(path, sr=sr, res_type='fft')
 
     if norm:
         meter = pyln.Meter(sr)  # create BS.1770 meter
@@ -49,7 +49,7 @@ def trim_long_silences(path, sr=None, return_raw_wav=False, norm=True, vad_max_s
         if np.abs(wav_raw).max() > 1.0:
             wav_raw = wav_raw / np.abs(wav_raw).max()
 
-    wav = librosa.resample(wav_raw, sr, sampling_rate, res_type='kaiser_best')
+    wav = librosa.resample(wav_raw, sr, sampling_rate, res_type='fft')
 
     vad_window_length = 30  # In milliseconds
     # Number of frames to average together when performing the moving average smoothing.
@@ -111,7 +111,7 @@ def process_utterance(wav_path,
         if trim_long_sil:
             wav, _, _ = trim_long_silences(wav_path, sample_rate)
         else:
-            wav, _ = librosa.core.load(wav_path, sr=sample_rate)
+            wav, _ = librosa.core.load(wav_path, sr=sample_rate, res_type='fft')
     else:
         wav = wav_path
     if loud_norm:
@@ -192,7 +192,8 @@ def get_pitch_crepe(wav_data, mel, hparams, threshold=0.05):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     # device = torch.device("cuda")
     # crepe只支持16khz采样率，需要重采样
-    wav16k = resampy.resample(wav_data, hparams['audio_sample_rate'], 16000)
+    # wav16k = resampy.resample(wav_data, hparams['audio_sample_rate'], 16000)
+    wav16k = librosa.resample(wav_data, hparams['audio_sample_rate'], 16000,res_type='fft')
     wav16k_torch = torch.FloatTensor(wav16k).unsqueeze(0).to(device)
 
     # 频率范围
@@ -200,7 +201,8 @@ def get_pitch_crepe(wav_data, mel, hparams, threshold=0.05):
     f0_max = hparams['f0_max']
 
     # 重采样后按照hopsize=80,也就是5ms一帧分析f0
-    f0, pd = torchcrepe.predict(wav16k_torch, 16000, 80, f0_min, f0_max, pad=True, model='full', batch_size=1024,
+    model = 'tiny' if hparams['use_crepe_tiny'] else 'full'
+    f0, pd = torchcrepe.predict(wav16k_torch, 16000, 80, f0_min, f0_max, pad=True, model=model, batch_size=1024,
                                 device=device, return_periodicity=True)
 
     # 滤波，去掉静音，设置uv阈值，参考原仓库readme

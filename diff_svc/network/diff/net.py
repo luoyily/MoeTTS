@@ -6,8 +6,8 @@ import torch.nn.functional as F
 
 from math import sqrt
 
-from utils.hparams import hparams
-from modules.commons.common_layers import Mish
+from diff_svc.utils.hparams import hparams
+from diff_svc.modules.commons.common_layers import Mish
 
 Linear = nn.Linear
 ConvTranspose2d = nn.ConvTranspose2d
@@ -50,7 +50,7 @@ def Conv1d(*args, **kwargs):
     return layer
 
 
-@torch.jit.script
+# @torch.jit.script
 def silu(x):
     return x * torch.sigmoid(x)
 

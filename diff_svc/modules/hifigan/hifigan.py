@@ -4,8 +4,8 @@ import torch.nn as nn
 from torch.nn import Conv1d, ConvTranspose1d, AvgPool1d, Conv2d
 from torch.nn.utils import weight_norm, remove_weight_norm, spectral_norm
 
-from modules.parallel_wavegan.layers import UpsampleNetwork, ConvInUpsampleNetwork
-from modules.parallel_wavegan.models.source import SourceModuleHnNSF
+from diff_svc.modules.parallel_wavegan.layers import UpsampleNetwork, ConvInUpsampleNetwork
+from diff_svc.modules.parallel_wavegan.models.source import SourceModuleHnNSF
 import numpy as np
 
 LRELU_SLOPE = 0.1

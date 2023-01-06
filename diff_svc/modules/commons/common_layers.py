@@ -4,7 +4,8 @@ from torch import nn
 from torch.nn import Parameter
 import torch.onnx.operators
 import torch.nn.functional as F
-import utils
+
+import diff_svc.utils as utils
 
 
 class Reshape(nn.Module):

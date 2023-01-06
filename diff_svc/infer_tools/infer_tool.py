@@ -10,16 +10,16 @@ import numpy as np
 import soundfile
 import torch
 
-import utils
-from modules.fastspeech.pe import PitchExtractor
-from network.diff.candidate_decoder import FFT
-from network.diff.diffusion import GaussianDiffusion
-from network.diff.net import DiffNet
-from network.vocoders.base_vocoder import VOCODERS, get_vocoder_cls
-from preprocessing.data_gen_utils import get_pitch_parselmouth, get_pitch_crepe
-from preprocessing.hubertinfer import Hubertencoder
-from utils.hparams import hparams, set_hparams
-from utils.pitch_utils import denorm_f0, norm_interp_f0
+import diff_svc.utils as utils
+from diff_svc.modules.fastspeech.pe import PitchExtractor
+from diff_svc.network.diff.candidate_decoder import FFT
+from diff_svc.network.diff.diffusion import GaussianDiffusion
+from diff_svc.network.diff.net import DiffNet
+from diff_svc.network.vocoders.base_vocoder import VOCODERS, get_vocoder_cls
+from diff_svc.preprocessing.data_gen_utils import get_pitch_parselmouth, get_pitch_crepe
+from diff_svc.preprocessing.hubertinfer import Hubertencoder
+from diff_svc.utils.hparams import hparams, set_hparams
+from diff_svc.utils.pitch_utils import denorm_f0, norm_interp_f0
 
 if os.path.exists("chunks_temp.json"):
     os.remove("chunks_temp.json")

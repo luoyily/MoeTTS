@@ -5,9 +5,9 @@ import torch
 import torch.nn as nn
 from torch.nn import functional as F
 
-from modules.commons.espnet_positional_embedding import RelPositionalEncoding
-from modules.commons.common_layers import SinusoidalPositionalEmbedding, Linear, EncSALayer, DecSALayer, BatchNorm1dTBC
-from utils.hparams import hparams
+from diff_svc.modules.commons.espnet_positional_embedding import RelPositionalEncoding
+from diff_svc.modules.commons.common_layers import SinusoidalPositionalEmbedding, Linear, EncSALayer, DecSALayer, BatchNorm1dTBC
+from diff_svc.utils.hparams import hparams
 
 DEFAULT_MAX_SOURCE_POSITIONS = 2000
 DEFAULT_MAX_TARGET_POSITIONS = 2000

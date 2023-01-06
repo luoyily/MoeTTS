@@ -25,7 +25,7 @@ def get_vec_units(con_model, audio_path, dev):
     if len(audio.shape) > 1:
         audio = librosa.to_mono(audio.transpose(1, 0))
     if sampling_rate != 16000:
-        audio = librosa.resample(audio, orig_sr=sampling_rate, target_sr=16000)
+        audio = librosa.resample(audio, orig_sr=sampling_rate, target_sr=16000,res_type='fft')
 
     feats = torch.from_numpy(audio).float()
     if feats.dim() == 2:  # double channels

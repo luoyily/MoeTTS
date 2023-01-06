@@ -9,7 +9,7 @@ from torch.nn import functional as F
 from torch.nn import Conv1d, ConvTranspose1d, AvgPool1d, Conv2d
 from torch.nn.utils import weight_norm, remove_weight_norm
 
-import vits.commons as commons
+import vits.commons as vits_commons
 from vits.commons import init_weights, get_padding
 from vits.transforms import piecewise_rational_quadratic_transform
 
@@ -160,7 +160,7 @@ class WN(torch.nn.Module):
       else:
         g_l = torch.zeros_like(x_in)
 
-      acts = commons.fused_add_tanh_sigmoid_multiply(
+      acts = vits_commons.fused_add_tanh_sigmoid_multiply(
           x_in,
           g_l,
           n_channels_tensor)

@@ -6,12 +6,12 @@ import re
 import librosa
 import torch
 
-import utils
-from modules.hifigan.hifigan import HifiGanGenerator
-from utils.hparams import hparams, set_hparams
-from network.vocoders.base_vocoder import register_vocoder
-from network.vocoders.pwg import PWG
-from network.vocoders.vocoder_utils import denoise
+import diff_svc.utils
+from diff_svc.modules.hifigan.hifigan import HifiGanGenerator
+from diff_svc.utils.hparams import hparams, set_hparams
+from diff_svc.network.vocoders.base_vocoder import register_vocoder
+from diff_svc.network.vocoders.pwg import PWG
+from diff_svc.network.vocoders.vocoder_utils import denoise
 
 
 def load_model(config_path, file_path):
@@ -63,7 +63,7 @@ class HifiGAN(PWG):
         device = self.device
         with torch.no_grad():
             c = torch.FloatTensor(mel).unsqueeze(0).transpose(2, 1).to(device)
-            with utils.Timer('hifigan', print_time=hparams['profile_infer']):
+            with diff_svc.utils.Timer('hifigan', print_time=hparams['profile_infer']):
                 f0 = kwargs.get('f0')
                 if f0 is not None and hparams.get('use_nsf'):
                     f0 = torch.FloatTensor(f0[None, :]).to(device)

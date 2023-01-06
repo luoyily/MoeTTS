@@ -5,9 +5,9 @@ from pathlib import Path
 import numpy as np
 import torch
 
-from network.hubert.hubert_model import hubert_soft, get_units
-from network.hubert.vec_model import load_model, get_vec_units
-from utils.hparams import hparams
+from diff_svc.network.hubert.hubert_model import hubert_soft, get_units
+from diff_svc.network.hubert.vec_model import load_model, get_vec_units
+from diff_svc.utils.hparams import hparams
 
 
 class Hubertencoder():

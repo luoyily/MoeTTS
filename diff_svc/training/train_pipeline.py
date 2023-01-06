@@ -1,7 +1,7 @@
-from utils.hparams import hparams
+from diff_svc.utils.hparams import hparams
 import torch
 from torch.nn import functional as F
-from utils.pitch_utils import f0_to_coarse, denorm_f0, norm_f0
+from diff_svc.utils.pitch_utils import f0_to_coarse, denorm_f0, norm_f0
 
 class Batch2Loss:
     '''

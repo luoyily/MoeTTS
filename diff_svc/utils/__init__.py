@@ -1,17 +1,17 @@
 import glob
-import logging
+# import logging
 import re
 import time
-from collections import defaultdict
+# from collections import defaultdict
 import os
 import sys
-import shutil
+# import shutil
 import types
 import numpy as np
 import torch
 import torch.nn.functional as F
-import torch.distributed as dist
-from torch import nn
+# import torch.distributed as dist
+# from torch import nn
 
 
 def tensors_to_scalars(metrics):

@@ -12,3 +12,6 @@ moe_tts_cpu_beta.spec
 /diff_svc/infer_tools/f0_temp.json
 __pycache__
 recent.json
+moe_tts_cpu.build
+moe_tts_cpu.dist
+moe_tts_cpu.dist1
