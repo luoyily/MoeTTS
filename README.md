@@ -13,6 +13,15 @@ Speech synthesis model repo for galgame characters based on Tacotron2 , Hifigan 
 
 ## 近期更新
 
+1.2.5：
+
+> 1. 规范diff_svc import
+> 2. 精简VITS与Tacotron2代码并移除了matplotlib, tensorflow依赖
+> 3. 删除不必要导入及依赖，加快启动速度
+> 4. diff svc增加Crepe轻量模型
+> 5. 使用两种编译器（pyinstaller, nuitka）
+> 6. diff svc音频处理采样类型换为fft
+
 1.2.4：
 
 >1. 增加最近模型与输出路径记录，方便下次打开继续。
@@ -110,14 +119,16 @@ VITS特殊说明
 
 ### diff-svc
 
-![diff-svc gui](./assets/diff_svc.png)
+![diff_svc_gui](./assets/diff_svc.png)
 
 参数说明：
 
 1. 升降半音：默认为0，支持正负整数输入，单位为半音
-2. 启用Crepe：该选项可降噪音频，启用后CPU耗时较高，越为原音频时长8倍，建议合成最终版本再开启，干净的音频无需开启。
-3. 加速倍率：默认为20，耗时约1:3，预览可使用100，耗时约1：1（该设置会影响音频质量）
-4. 待转换音频：wav或ogg纯人声音频，转换后为模型角色音色。
+2. 启用Crepe：该选项可降噪音频，启用后CPU耗时较高，约为原音频时长8倍，建议合成最终版本再开启，干净的音频无需开启。
+3. Crepe轻量模式：在启用Crepe的前提下，勾选此选项后Crepe使用Tiny模型，耗时更短，约为原音频时长1/4。
+4. 加速倍率：默认为20，耗时约1:3，预览可使用100，耗时约1：1（该设置会影响音频质量）
+5. 加速倍率：默认为20，耗时约1:3，预览可使用100，耗时约1：1（该设置会影响音频质量）
+6. 待转换音频：wav或ogg纯人声音频，转换后为模型角色音色。
 
 ## 在线Demo
 

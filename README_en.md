@@ -13,6 +13,17 @@ Speech synthesis model repo for galgame characters based on Tacotron2, Hifigan a
 
 ## Latest Updates
 
+1.2.5：
+
+> 1. Improve diff svc code.
+> 2. Simplify VITS and Tacotron2 code and remove matplotlib, tensorflow dependencies.
+> 3. Remove unnecessary imports and dependencies.
+> 4. Crepe can toggle between full and tiny models.
+> 5. Added nuitka compiled distribution.
+> 6. Modified the resampling type used by diffsvc when processing audio sample rates and remove numba dependency. (For nuitka to work.)
+>
+> A standalone language file and related settings will be available later to support other languages.
+
 1.2.4：
 
 >1. Add recent use history.
@@ -115,6 +126,7 @@ Setting Instructions:
 2. 启用Crepe(Enable Crepe)：Improved audio quality when enabled, but will take longer.
 3. 加速倍率(Acceleration ratio)：Default is 20, higher values will infer faster, but may affect quality.
 4. 待转换音频(Input audio)：wav or ogg file with vocals only.
+5. Crepe轻量模式(Crepe Tiny): With Crepe enabled, Crepe uses Tiny models when this option is checked and takes less time.
 
 ## Online Demo
 
