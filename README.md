@@ -142,7 +142,7 @@ Integrated into [Huggingface Spaces ](https://huggingface.co/spaces) using  [Gra
 | ------------------------------------------------------------ | ----------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | [ATRI](https://pan.baidu.com/s/1itDhrhzw6uZYxB2238BzTQ?pwd=0z3u) | Tacotron2+Hifigan | 游戏 ATRI- My dear moments 的角色ATRI模型                    | 无空格罗马音，标点可保留英文逗号句号。例如：`tozendesu.koseinodesukara.`也可使用工具箱日语g2p（普通转换） |
 | [ATRI-VITS](https://pan.baidu.com/s/1_vhOx50OE5R4bE02ZMe9GA?pwd=9jo4) | VITS 单角色       | 游戏 ATRI- My dear moments 的角色ATRI模型                    | 工具箱中的日语g2p(调形标注+ts替换)                           |
-| [Galgame 13位角色](https://pan.baidu.com/s/1anZ3eusmG8BVhrQQrvlkug?pwd=0i9r) | VITS 多角色       | 包含以下角色（游戏名略）：0 杏璃 1 杏铃 2 Apeiria 3 明日香 4 ATRI 5 艾拉 6 彩音 7 星奏 8 由依 9 冰织 10 真白 11 美绘瑠 12 二阶堂真红 | 工具箱中的日语g2p(调形标注+ts替换)                           |
+| [Galgame 13位角色](https://pan.baidu.com/s/1anZ3eusmG8BVhrQQrvlkug?pwd=0i9r)     [1.3.0配置文件](https://pan.baidu.com/s/1RMscvHnJgn5w0Vi7RRW9sg?pwd=a947) | VITS 多角色       | 包含以下角色（游戏名略）：0 杏璃 1 杏铃 2 Apeiria 3 明日香 4 ATRI 5 艾拉 6 彩音 7 星奏 8 由依 9 冰织 10 真白 11 美绘瑠 12 二阶堂真红 | 工具箱中的日语g2p(调形标注+ts替换)                           |
 | [Mori](https://pan.baidu.com/s/1ekfczPolJRNjqVDNgjTJSA?pwd=rm1v) | VITS 单角色       | 游戏 Fox Hime Zero 角色 茉莉                                 | 工具箱中的日语g2p(调形标注)                                  |
 
 ### Diff-svc
