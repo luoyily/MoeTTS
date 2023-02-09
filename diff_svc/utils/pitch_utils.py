@@ -1,20 +1,8 @@
-#########
-# world
-##########
-import librosa
 import numpy as np
 import torch
 
-# gamma = 0
-# mcepInput = 3  # 0 for dB, 3 for magnitude
-# alpha = 0.45
-# en_floor = 10 ** (-80 / 20)
-# FFT_SIZE = 2048
 
-
-
-
-def f0_to_coarse(f0,hparams):
+def f0_to_coarse(f0, hparams):
     f0_bin = hparams['f0_bin']
     f0_max = hparams['f0_max']
     f0_min = hparams['f0_min']

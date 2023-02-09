@@ -1,4 +1,3 @@
-import hashlib
 import json
 import os
 import time
@@ -11,49 +10,14 @@ import soundfile
 import torch
 
 import diff_svc.utils as utils
-from diff_svc.modules.fastspeech.pe import PitchExtractor
-from diff_svc.network.diff.candidate_decoder import FFT
-from diff_svc.network.diff.diffusion import GaussianDiffusion
-from diff_svc.network.diff.net import DiffNet
-from diff_svc.network.vocoders.base_vocoder import VOCODERS, get_vocoder_cls
-from diff_svc.preprocessing.data_gen_utils import get_pitch_parselmouth, get_pitch_crepe
-from diff_svc.preprocessing.hubertinfer import Hubertencoder
+from diff_svc.infer_tools.f0_static import compare_pitch, static_f0_time
+from diff_svc.modules.diff.diffusion import GaussianDiffusion
+from diff_svc.modules.diff.net import DiffNet
+from diff_svc.modules.vocoders.nsf_hifigan import NsfHifiGAN
+from diff_svc.preprocessing.hubertinfer import HubertEncoder
+from diff_svc.preprocessing.process_pipeline import File2Batch, get_pitch_parselmouth
 from diff_svc.utils.hparams import hparams, set_hparams
 from diff_svc.utils.pitch_utils import denorm_f0, norm_interp_f0
-
-if os.path.exists("chunks_temp.json"):
-    os.remove("chunks_temp.json")
-
-
-def read_temp(file_name):
-    if not os.path.exists(file_name):
-        with open(file_name, "w") as f:
-            f.write(json.dumps({"info": "temp_dict"}))
-        return {}
-    else:
-        try:
-            with open(file_name, "r") as f:
-                data = f.read()
-            data_dict = json.loads(data)
-            if os.path.getsize(file_name) > 50 * 1024 * 1024:
-                f_name = file_name.split("/")[-1]
-                print(f"clean {f_name}")
-                for wav_hash in list(data_dict.keys()):
-                    if int(time.time()) - int(data_dict[wav_hash]["time"]) > 14 * 24 * 3600:
-                        del data_dict[wav_hash]
-        except Exception as e:
-            print(e)
-            print(f"{file_name} error,auto rebuild file")
-            data_dict = {"info": "temp_dict"}
-        return data_dict
-
-
-f0_dict = read_temp("./diff_svc/infer_tools/f0_temp.json")
-
-
-def write_temp(file_name, data):
-    with open(file_name, "w") as f:
-        f.write(json.dumps(data))
 
 
 def timeit(func):
@@ -67,9 +31,9 @@ def timeit(func):
 
 
 def format_wav(audio_path):
-    if Path(audio_path).suffix=='.wav':
+    if Path(audio_path).suffix == '.wav':
         return
-    raw_audio, raw_sample_rate = librosa.load(audio_path, mono=True,sr=None)
+    raw_audio, raw_sample_rate = librosa.load(audio_path, mono=True, sr=None,res_type='polyphase')
     soundfile.write(Path(audio_path).with_suffix(".wav"), raw_audio, raw_sample_rate)
 
 
@@ -96,74 +60,55 @@ def mkdir(paths: list):
             os.mkdir(path)
 
 
-def get_md5(content):
-    return hashlib.new("md5", content).hexdigest()
-
-
 class Svc:
-    def __init__(self, project_name, config_name, hubert_gpu, model_path):
+    def __init__(self, project_name, config_name, hubert_gpu, model_path, onnx=False):
         self.project_name = project_name
         self.DIFF_DECODERS = {
             'wavenet': lambda hp: DiffNet(hp['audio_num_mel_bins']),
-            'fft': lambda hp: FFT(
-                hp['hidden_size'], hp['dec_layers'], hp['dec_ffn_kernel_size'], hp['num_heads']),
         }
 
         self.model_path = model_path
-        self.dev = torch.device("cuda")
+        self.dev = torch.device("cpu")
 
         self._ = set_hparams(config=config_name, exp_name=self.project_name, infer=True,
-                             reset=True,
-                             hparams_str='',
-                             print_hparams=False)
+                             reset=True, hparams_str='', print_hparams=False)
 
-        self.mel_bins = hparams['audio_num_mel_bins']
+        hparams['hubert_gpu'] = hubert_gpu
+        self.hubert = HubertEncoder(hparams['hubert_path'], onnx=onnx)
         self.model = GaussianDiffusion(
-            phone_encoder=Hubertencoder(hparams['hubert_path']),
-            out_dims=self.mel_bins, denoise_fn=self.DIFF_DECODERS[hparams['diff_decoder_type']](hparams),
+            phone_encoder=self.hubert,
+            out_dims=hparams['audio_num_mel_bins'],
+            denoise_fn=self.DIFF_DECODERS[hparams['diff_decoder_type']](hparams),
             timesteps=hparams['timesteps'],
             K_step=hparams['K_step'],
             loss_type=hparams['diff_loss_type'],
             spec_min=hparams['spec_min'], spec_max=hparams['spec_max'],
         )
-        self.load_ckpt()
+        utils.load_ckpt(self.model, self.model_path, 'model', force=True, strict=True)
         self.model.cpu()
-        hparams['hubert_gpu'] = hubert_gpu
-        self.hubert = Hubertencoder(hparams['hubert_path'])
-        self.pe = PitchExtractor().cpu()
-        utils.load_ckpt(self.pe, hparams['pe_ckpt'], 'model', strict=True)
-        self.pe.eval()
-        self.vocoder = get_vocoder_cls(hparams)()
+        self.vocoder = NsfHifiGAN()
 
-    def load_ckpt(self, model_name='model', force=True, strict=True):
-        utils.load_ckpt(self.model, self.model_path, model_name, force, strict)
-
-    def infer(self, in_path, key, acc, use_pe=True, use_crepe=True, thre=0.05, singer=False, **kwargs):
-        batch = self.pre(in_path, acc, use_crepe, thre)
-        spk_embed = batch.get('spk_embed') if not hparams['use_spk_id'] else batch.get('spk_ids')
-        hubert = batch['hubert']
-        ref_mels = batch["mels"]
-        energy=batch['energy']
-        mel2ph = batch['mel2ph']
+    def infer(self, in_path, key, acc, spk_id=0, use_crepe=True, singer=False):
+        batch = self.pre(in_path, acc, spk_id, use_crepe)
         batch['f0'] = batch['f0'] + (key / 12)
-        batch['f0'][batch['f0']>np.log2(hparams['f0_max'])]=0
-        f0 = batch['f0']
-        uv = batch['uv']
+        batch['f0'][batch['f0'] > np.log2(hparams['f0_max'])] = 0
+
         @timeit
         def diff_infer():
-            outputs = self.model(
-                hubert.cpu(), spk_embed=spk_embed, mel2ph=mel2ph.cpu(), f0=f0.cpu(), uv=uv.cpu(),
-                ref_mels=ref_mels.cpu(),
-                infer=True, **kwargs)
-            return outputs
-        outputs=diff_infer()
-        batch['outputs'] = self.model.out2mel(outputs['mel_out'])
+            spk_embed = batch.get('spk_embed') if not hparams['use_spk_id'] else batch.get('spk_ids')
+            energy = batch.get('energy').cpu() if batch.get('energy') else None
+            if spk_embed is None:
+                spk_embed = torch.LongTensor([0])
+            diff_outputs = self.model(
+                hubert=batch['hubert'].cpu(), spk_embed_id=spk_embed.cpu(), mel2ph=batch['mel2ph'].cpu(),
+                f0=batch['f0'].cpu(), energy=energy, ref_mels=batch["mels"].cpu(), infer=True)
+            return diff_outputs
+
+        outputs = diff_infer()
+        batch['outputs'] = outputs['mel_out']
         batch['mel2ph_pred'] = outputs['mel2ph']
         batch['f0_gt'] = denorm_f0(batch['f0'], batch['uv'], hparams)
-        if use_pe:
-            batch['f0_pred'] = self.pe(outputs['mel_out'])['f0_denorm_pred'].detach()
-        else:
-            batch['f0_pred'] = outputs.get('f0_denorm')
+        batch['f0_pred'] = outputs.get('f0_denorm')
         return self.after_infer(batch, singer, in_path)
 
     @timeit
@@ -199,136 +144,58 @@ class Svc:
         wav_pred = self.vocoder.spec2wav(mel_pred, f0=f0_pred)
         return f0_gt, f0_pred, wav_pred
 
-    def temporary_dict2processed_input(self, item_name, temp_dict, use_crepe=True, thre=0.05):
-        '''
-            process data in temporary_dicts
-        '''
-
-        binarization_args = hparams['binarization_args']
-
-        @timeit
-        def get_pitch(wav, mel):
-            # get ground truth f0 by self.get_pitch_algorithm
-            global f0_dict
-            if use_crepe:
-                md5 = get_md5(wav)
-                if f"{md5}_gt" in f0_dict.keys():
-                    print("load temp crepe f0")
-                    gt_f0 = np.array(f0_dict[f"{md5}_gt"]["f0"])
-                    coarse_f0 = np.array(f0_dict[f"{md5}_coarse"]["f0"])
-                else:
-                    torch.cuda.is_available() and torch.cuda.empty_cache()
-                    gt_f0, coarse_f0 = get_pitch_crepe(wav, mel, hparams, thre)
-                f0_dict[f"{md5}_gt"] = {"f0": gt_f0.tolist(), "time": int(time.time())}
-                f0_dict[f"{md5}_coarse"] = {"f0": coarse_f0.tolist(), "time": int(time.time())}
-                write_temp("./diff_svc/infer_tools/f0_temp.json", f0_dict)
-            else:
-                gt_f0, coarse_f0 = get_pitch_parselmouth(wav, mel, hparams)
-            processed_input['f0'] = gt_f0
-            processed_input['pitch'] = coarse_f0
-
-        def get_align(mel, phone_encoded):
-            mel2ph = np.zeros([mel.shape[0]], int)
-            start_frame = 0
-            ph_durs = mel.shape[0] / phone_encoded.shape[0]
-            if hparams['debug']:
-                print(mel.shape, phone_encoded.shape, mel.shape[0] / phone_encoded.shape[0])
-            for i_ph in range(phone_encoded.shape[0]):
-                end_frame = int(i_ph * ph_durs + ph_durs + 0.5)
-                mel2ph[start_frame:end_frame + 1] = i_ph + 1
-                start_frame = end_frame + 1
-
-            processed_input['mel2ph'] = mel2ph
-
-        if hparams['vocoder'] in VOCODERS:
-            wav, mel = VOCODERS[hparams['vocoder']].wav2spec(temp_dict['wav_fn'])
-        else:
-            wav, mel = VOCODERS[hparams['vocoder'].split('.')[-1]].wav2spec(temp_dict['wav_fn'])
-        processed_input = {
-            'item_name': item_name, 'mel': mel,
-            'sec': len(wav) / hparams['audio_sample_rate'], 'len': mel.shape[0]
-        }
-        processed_input = {**temp_dict, **processed_input}  # merge two dicts
-
-        if binarization_args['with_f0']:
-            get_pitch(wav, mel)
-        if binarization_args['with_hubert']:
-            st = time.time()
-            hubert_encoded = processed_input['hubert'] = self.hubert.encode(temp_dict['wav_fn'])
-            et = time.time()
-            dev = 'cuda' if hparams['hubert_gpu'] and torch.cuda.is_available() else 'cpu'
-            print(f'hubert (on {dev}) time used {et - st}')
-
-            if binarization_args['with_align']:
-                get_align(mel, hubert_encoded)
-        return processed_input
-
-    def pre(self, wav_fn, accelerate, use_crepe=True, thre=0.05):
+    def pre(self, wav_fn, accelerate, spk_id=0, use_crepe=True):
         if isinstance(wav_fn, BytesIO):
             item_name = self.project_name
         else:
             song_info = wav_fn.split('/')
             item_name = song_info[-1].split('.')[-2]
-        temp_dict = {'wav_fn': wav_fn, 'spk_id': self.project_name}
+        temp_dict = {'wav_fn': wav_fn, 'spk_id': spk_id, 'id': 0}
 
-        temp_dict = self.temporary_dict2processed_input(item_name, temp_dict, use_crepe, thre)
+        temp_dict = File2Batch.temporary_dict2processed_input(item_name, temp_dict, self.hubert, infer=True,
+                                                              use_crepe=use_crepe)
         hparams['pndm_speedup'] = accelerate
-        batch = processed_input2batch([getitem(temp_dict)])
+        batch = File2Batch.processed_input2batch([getitem(temp_dict)])
         return batch
+
+    def evaluate_key(self, wav_path, key, auto_key):
+        if "f0_static" in hparams.keys():
+            f0_static = json.loads(hparams['f0_static'])
+            wav, mel = self.vocoder.wav2spec(wav_path)
+            input_f0 = get_pitch_parselmouth(wav, mel, hparams)[0]
+            pitch_time_temp = static_f0_time(input_f0)
+            eval_dict = {}
+            for trans_key in range(-12, 12):
+                eval_dict[trans_key] = compare_pitch(f0_static, pitch_time_temp, trans_key=trans_key)
+            sort_key = sorted(eval_dict, key=eval_dict.get, reverse=True)[:5]
+            print(f"推荐移调:{sort_key}")
+            if auto_key:
+                print(f"自动变调已启用，您的输入key被{sort_key[0]}key覆盖，控制参数为auto_key")
+                return sort_key[0]
+        else:
+            print("config缺少f0_staic，无法使用自动变调，可通过infer_tools/data_static添加")
+        return key
 
 
 def getitem(item):
     max_frames = hparams['max_frames']
     spec = torch.Tensor(item['mel'])[:max_frames]
-    energy = (spec.exp() ** 2).sum(-1).sqrt()
     mel2ph = torch.LongTensor(item['mel2ph'])[:max_frames] if 'mel2ph' in item else None
     f0, uv = norm_interp_f0(item["f0"][:max_frames], hparams)
     hubert = torch.Tensor(item['hubert'][:hparams['max_input_tokens']])
     pitch = torch.LongTensor(item.get("pitch"))[:max_frames]
     sample = {
+        "id": item['id'],
+        "spk_id": item['spk_id'],
         "item_name": item['item_name'],
         "hubert": hubert,
         "mel": spec,
         "pitch": pitch,
-        "energy": energy,
         "f0": f0,
         "uv": uv,
         "mel2ph": mel2ph,
         "mel_nonpadding": spec.abs().sum(-1) > 0,
     }
+    if hparams['use_energy_embed']:
+        sample['energy'] = item['energy']
     return sample
-
-
-def processed_input2batch(samples):
-    '''
-        Args:
-            samples: one batch of processed_input
-        NOTE:
-            the batch size is controlled by hparams['max_sentences']
-    '''
-    if len(samples) == 0:
-        return {}
-    item_names = [s['item_name'] for s in samples]
-    hubert = utils.collate_2d([s['hubert'] for s in samples], 0.0)
-    f0 = utils.collate_1d([s['f0'] for s in samples], 0.0)
-    pitch = utils.collate_1d([s['pitch'] for s in samples])
-    uv = utils.collate_1d([s['uv'] for s in samples])
-    energy = utils.collate_1d([s['energy'] for s in samples], 0.0)
-    mel2ph = utils.collate_1d([s['mel2ph'] for s in samples], 0.0) \
-        if samples[0]['mel2ph'] is not None else None
-    mels = utils.collate_2d([s['mel'] for s in samples], 0.0)
-    mel_lengths = torch.LongTensor([s['mel'].shape[0] for s in samples])
-
-    batch = {
-        'item_name': item_names,
-        'nsamples': len(samples),
-        'hubert': hubert,
-        'mels': mels,
-        'mel_lengths': mel_lengths,
-        'mel2ph': mel2ph,
-        'energy': energy,
-        'pitch': pitch,
-        'f0': f0,
-        'uv': uv,
-    }
-    return batch

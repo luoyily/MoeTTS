@@ -1,3 +1,4 @@
+import subprocess
 
 import librosa
 import librosa.filters

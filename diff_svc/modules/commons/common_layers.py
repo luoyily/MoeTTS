@@ -1,9 +1,10 @@
 import math
+
 import torch
+import torch.nn.functional as F
+import torch.onnx.operators
 from torch import nn
 from torch.nn import Parameter
-import torch.onnx.operators
-import torch.nn.functional as F
 
 import diff_svc.utils as utils
 
@@ -460,7 +461,6 @@ class MultiheadAttention(nn.Module):
             bias = bias[start:end]
         return F.linear(input, weight, bias)
 
-
     def apply_sparse_mask(self, attn_weights, tgt_len, src_len, bsz):
         return attn_weights
 
@@ -482,10 +482,12 @@ class Swish(torch.autograd.Function):
 class CustomSwish(nn.Module):
     def forward(self, input_tensor):
         return Swish.apply(input_tensor)
-        
+
+
 class Mish(nn.Module):
     def forward(self, x):
         return x * torch.tanh(F.softplus(x))
+
 
 class TransformerFFNLayer(nn.Module):
     def __init__(self, hidden_size, filter_size, padding="SAME", kernel_size=1, dropout=0., act='gelu'):
@@ -649,7 +651,8 @@ class DecSALayer(nn.Module):
                 key_padding_mask=encoder_padding_mask,
                 incremental_state=incremental_state,
                 static_kv=True,
-                enc_dec_attn_constraint_mask=None, #utils.get_incremental_state(self, incremental_state, 'enc_dec_attn_constraint_mask'),
+                enc_dec_attn_constraint_mask=None,
+                # utils.get_incremental_state(self, incremental_state, 'enc_dec_attn_constraint_mask'),
                 reset_attn_weight=reset_attn_weight
             )
             attn_logits = attn[1]

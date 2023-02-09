@@ -16,3 +16,6 @@ moe_tts_cpu.build
 moe_tts_cpu.dist
 moe_tts_cpu.dist1
 *.7z
+diff_svc/checkpoints
+diff_svc/temp
+*.wav

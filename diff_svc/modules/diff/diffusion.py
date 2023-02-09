@@ -1,16 +1,16 @@
 from collections import deque
 from functools import partial
 from inspect import isfunction
+
 import numpy as np
 import torch
 import torch.nn.functional as F
 from torch import nn
 from tqdm import tqdm
 
-from diff_svc.modules.fastspeech.fs2 import FastSpeech2
-# from modules.diffsinger_midi.fs2 import FastSpeech2MIDI
+from diff_svc.modules.encoder import SvcEncoder
+# from diff_svc.training.train_pipeline import Batch2Loss
 from diff_svc.utils.hparams import hparams
-from diff_svc.training.train_pipeline import Batch2Loss
 
 
 def exists(x):
@@ -70,10 +70,7 @@ class GaussianDiffusion(nn.Module):
                  spec_max=None):
         super().__init__()
         self.denoise_fn = denoise_fn
-        # if hparams.get('use_midi') is not None and hparams['use_midi']:
-        #     self.fs2 = FastSpeech2MIDI(phone_encoder, out_dims)
-        # else:
-        self.fs2 = FastSpeech2(phone_encoder, out_dims)
+        self.fs2 = SvcEncoder(phone_encoder, out_dims)
         self.mel_bins = out_dims
 
         if exists(betas):
@@ -122,12 +119,6 @@ class GaussianDiffusion(nn.Module):
         self.register_buffer('spec_min', torch.FloatTensor(spec_min)[None, None, :hparams['keep_bins']])
         self.register_buffer('spec_max', torch.FloatTensor(spec_max)[None, None, :hparams['keep_bins']])
 
-    def q_mean_variance(self, x_start, t):
-        mean = extract(self.sqrt_alphas_cumprod, t, x_start.shape) * x_start
-        variance = extract(1. - self.alphas_cumprod, t, x_start.shape)
-        log_variance = extract(self.log_one_minus_alphas_cumprod, t, x_start.shape)
-        return mean, variance, log_variance
-
     def predict_start_from_noise(self, x_t, t, noise):
         return (
                 extract(self.sqrt_recip_alphas_cumprod, t, x_t.shape) * x_t -
@@ -161,19 +152,20 @@ class GaussianDiffusion(nn.Module):
         # no noise when t == 0
         nonzero_mask = (1 - (t == 0).float()).reshape(b, *((1,) * (len(x.shape) - 1)))
         return model_mean + nonzero_mask * (0.5 * model_log_variance).exp() * noise
-    
+
     @torch.no_grad()
-    def p_sample_plms(self, x, t, interval, cond, clip_denoised=True, repeat_noise=False):
+    def p_sample_plms(self, x, t, interval, cond):
         """
         Use the PLMS method from [Pseudo Numerical Methods for Diffusion Models on Manifolds](https://arxiv.org/abs/2202.09778).
         """
 
         def get_x_pred(x, noise_t, t):
             a_t = extract(self.alphas_cumprod, t, x.shape)
-            a_prev = extract(self.alphas_cumprod, torch.max(t-interval, torch.zeros_like(t)), x.shape)
+            a_prev = extract(self.alphas_cumprod, torch.max(t - interval, torch.zeros_like(t)), x.shape)
             a_t_sq, a_prev_sq = a_t.sqrt(), a_prev.sqrt()
 
-            x_delta = (a_prev - a_t) * ((1 / (a_t_sq * (a_t_sq + a_prev_sq))) * x - 1 / (a_t_sq * (((1 - a_prev) * a_t).sqrt() + ((1 - a_t) * a_prev).sqrt())) * noise_t)
+            x_delta = (a_prev - a_t) * ((1 / (a_t_sq * (a_t_sq + a_prev_sq))) * x - 1 / (
+                    a_t_sq * (((1 - a_prev) * a_t).sqrt() + ((1 - a_t) * a_prev).sqrt())) * noise_t)
             x_pred = x + x_delta
 
             return x_pred
@@ -183,7 +175,7 @@ class GaussianDiffusion(nn.Module):
 
         if len(noise_list) == 0:
             x_pred = get_x_pred(x, noise_pred, t)
-            noise_pred_prev = self.denoise_fn(x_pred, max(t-interval, 0), cond=cond)
+            noise_pred_prev = self.denoise_fn(x_pred, max(t - interval, 0), cond=cond)
             noise_pred_prime = (noise_pred + noise_pred_prev) / 2
         elif len(noise_list) == 1:
             noise_pred_prime = (3 * noise_pred - noise_list[-1]) / 2
@@ -224,13 +216,11 @@ class GaussianDiffusion(nn.Module):
 
         return loss
 
-    def forward(self, hubert, mel2ph=None, spk_embed=None,
-                ref_mels=None, f0=None, uv=None, energy=None, infer=False, **kwargs):
+    def forward(self, hubert, mel2ph=None, spk_embed_id=None, ref_mels=None, f0=None, energy=None, infer=False):
         '''
             conditioning diffusion, use fastspeech2 encoder output as the condition
         '''
-        ret = self.fs2(hubert, mel2ph, spk_embed, None, f0, uv, energy,
-                       skip_decoder=True, infer=infer, **kwargs)
+        ret = self.fs2(hubert, mel2ph, spk_embed_id, f0, energy)
         cond = ret['decoder_inp'].transpose(1, 2)
         b, *_, device = *hubert.shape, hubert.device
 
@@ -240,35 +230,12 @@ class GaussianDiffusion(nn.Module):
                 self.norm_spec(ref_mels), cond, ret, self.K_step, b, device
             )
         else:
-            '''
-            ret['fs2_mel'] = ret['mel_out']
-            fs2_mels = ret['mel_out']
             t = self.K_step
-            fs2_mels = self.norm_spec(fs2_mels)
-            fs2_mels = fs2_mels.transpose(1, 2)[:, None, :, :]
-            x = self.q_sample(x_start=fs2_mels, t=torch.tensor([t - 1], device=device).long())
-            if hparams.get('gaussian_start') is not None and hparams['gaussian_start']:
-                print('===> gaussion start.')
-                shape = (cond.shape[0], 1, self.mel_bins, cond.shape[2])
-                x = torch.randn(shape, device=device)
-            '''
-            if 'use_gt_mel' in kwargs.keys() and kwargs['use_gt_mel']:
-                t =kwargs['add_noise_step']
-                print('===>using ground truth mel as start, please make sure parameter "key==0" !')
-                fs2_mels = ref_mels
-                fs2_mels = self.norm_spec(fs2_mels)
-                fs2_mels = fs2_mels.transpose(1, 2)[:, None, :, :]
-                x = self.q_sample(x_start=fs2_mels, t=torch.tensor([t - 1], device=device).long())
-                # for i in tqdm(reversed(range(0, t)), desc='sample time step', total=t):
-                #     x = self.p_sample(x, torch.full((b,), i, device=device, dtype=torch.long), cond)
-            else:
-                t = self.K_step
-                #print('===> gaussion start.')
-                shape = (cond.shape[0], 1, self.mel_bins, cond.shape[2])
-                x = torch.randn(shape, device=device)
+            shape = (cond.shape[0], 1, self.mel_bins, cond.shape[2])
+            x = torch.randn(shape, device=device)
             if hparams.get('pndm_speedup') and hparams['pndm_speedup'] > 1:
                 self.noise_list = deque(maxlen=4)
-                iteration_interval =hparams['pndm_speedup']
+                iteration_interval = hparams['pndm_speedup']
                 for i in tqdm(reversed(range(0, t, iteration_interval)), desc='sample time step',
                               total=t // iteration_interval):
                     x = self.p_sample_plms(x, torch.full((b,), i, device=device, dtype=torch.long), iteration_interval,
@@ -288,45 +255,3 @@ class GaussianDiffusion(nn.Module):
 
     def denorm_spec(self, x):
         return (x + 1) / 2 * (self.spec_max - self.spec_min) + self.spec_min
-
-    def cwt2f0_norm(self, cwt_spec, mean, std, mel2ph):
-        return self.fs2.cwt2f0_norm(cwt_spec, mean, std, mel2ph)
-
-    def out2mel(self, x):
-        return x
-
-
-class OfflineGaussianDiffusion(GaussianDiffusion):
-    def forward(self, txt_tokens, mel2ph=None, spk_embed=None,
-                ref_mels=None, f0=None, uv=None, energy=None, infer=False, **kwargs):
-        b, *_, device = *txt_tokens.shape, txt_tokens.device
-
-        ret = self.fs2(txt_tokens, mel2ph, spk_embed, ref_mels, f0, uv, energy,
-                       skip_decoder=True, infer=True, **kwargs)
-        cond = ret['decoder_inp'].transpose(1, 2)
-        fs2_mels = ref_mels[1]
-        ref_mels = ref_mels[0]
-
-        if not infer:
-            t = torch.randint(0, self.K_step, (b,), device=device).long()
-            x = ref_mels
-            x = self.norm_spec(x)
-            x = x.transpose(1, 2)[:, None, :, :]  # [B, 1, M, T]
-            ret['diff_loss'] = self.p_losses(x, t, cond)
-        else:
-            t = self.K_step
-            fs2_mels = self.norm_spec(fs2_mels)
-            fs2_mels = fs2_mels.transpose(1, 2)[:, None, :, :]
-
-            x = self.q_sample(x_start=fs2_mels, t=torch.tensor([t - 1], device=device).long())
-
-            if hparams.get('gaussian_start') is not None and hparams['gaussian_start']:
-                print('===> gaussion start.')
-                shape = (cond.shape[0], 1, self.mel_bins, cond.shape[2])
-                x = torch.randn(shape, device=device)
-            for i in tqdm(reversed(range(0, t)), desc='sample time step', total=t):
-                x = self.p_sample(x, torch.full((b,), i, device=device, dtype=torch.long), cond)
-            x = x[:, 0].transpose(1, 2)
-            ret['mel_out'] = self.denorm_spec(x)
-
-        return ret

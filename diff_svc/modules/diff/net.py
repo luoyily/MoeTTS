@@ -1,13 +1,12 @@
 import math
+from math import sqrt
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from math import sqrt
-
-from diff_svc.utils.hparams import hparams
 from diff_svc.modules.commons.common_layers import Mish
+from diff_svc.utils.hparams import hparams
 
 Linear = nn.Linear
 ConvTranspose2d = nn.ConvTranspose2d
@@ -50,7 +49,7 @@ def Conv1d(*args, **kwargs):
     return layer
 
 
-# @torch.jit.script
+@torch.jit.script
 def silu(x):
     return x * torch.sigmoid(x)
 
@@ -80,8 +79,9 @@ class ResidualBlock(nn.Module):
         residual, skip = torch.chunk(y, 2, dim=1)
         # Using torch.split instead of torch.chunk to avoid using onnx::Slice
         # residual, skip = torch.split(y, torch.div(y.shape[1], 2), dim=1)
-        
+
         return (x + residual) / sqrt(2.0), skip
+
 
 class DiffNet(nn.Module):
     def __init__(self, in_dims=80):
