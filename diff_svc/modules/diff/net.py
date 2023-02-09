@@ -49,7 +49,7 @@ def Conv1d(*args, **kwargs):
     return layer
 
 
-@torch.jit.script
+# @torch.jit.script
 def silu(x):
     return x * torch.sigmoid(x)
 
