@@ -9,7 +9,7 @@ Speech synthesis model repo for galgame characters based on Tacotron2 , Hifigan 
 
 这是一个存放基于Tacotron2，Hifigan，VITS，Diff-SVC的galgame角色语音合成的模型库的仓库。另外也用于发行编译后的推理GUI。
 
-## 声明：禁止使用该项目以及分享的模型以及衍生产物参与Galgame开发（包括非商业游戏）
+停止维护通知：GUI功能维护已较为完善，此项目后续将不再维护。
 
 ## 近期更新
 
@@ -44,7 +44,7 @@ Speech synthesis model repo for galgame characters based on Tacotron2 , Hifigan 
 > 1. 更新diff-svc(同步diffsvc原项目：支持nsf hifigan,增加Crepe缓存，修复了一些BUG)
 > 2. 11-22：BUG通知，加载输入音频会覆盖原始wav，记得备份。配置文件开启UV可能导致呼吸声与空白异常。下版本修复。
 
-GPU版请见本仓库“gpu”分支。代码见dev分支。
+GPU版请见本仓库“gpu”分支（此分支更新滞后于cpu版）。代码见dev分支。
 
 ## 用户协议
 
@@ -189,11 +189,13 @@ Integrated into [Huggingface Spaces ](https://huggingface.co/spaces) using  [Gra
 
 ## 分享模型&参与开发
 
-欢迎分享你的预训练模型，由于模型较大，暂时不打算存放在GitHub，可以拉取该项目后将你的模型下载地址以及信息写在Readme的模型下载部分中。提交PR即可。
+此项目已暂停维护，不再添加新模型。
 
-如果有任何优化建议或者BUG可以提issue。
+~~欢迎分享你的预训练模型，由于模型较大，暂时不打算存放在GitHub，可以拉取该项目后将你的模型下载地址以及信息写在Readme的模型下载部分中。提交PR即可。~~
 
-如您希望为项目追加新功能并合并到dev分支，请先查看Projects页面，避免PR冲突。
+~~如果有任何优化建议或者BUG可以提issue。~~
+
+~~如您希望为项目追加新功能并合并到dev分支，请先查看Projects页面，避免PR冲突。~~
 
 ## 感谢名单&项目贡献者
 
@@ -217,3 +219,5 @@ DiffSinger:https://github.com/MoonInTheRiver/DiffSinger
 DiffSinger(openvpi):https://github.com/openvpi/DiffSinger
 
 DiffSinger 社区声码器企划：https://openvpi.github.io/vocoders/
+
+diff svc(openvpi): https://github.com/openvpi/diff-svc

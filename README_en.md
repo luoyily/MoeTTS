@@ -9,7 +9,9 @@ Speech synthesis model repo for galgame characters based on Tacotron2 , Hifigan 
 
 Speech synthesis model repo for galgame characters based on Tacotron2, Hifigan and VITS. The repo is also used to publish precompiled GUI.
 
-(Beta version is also used to try other features)
+Archive Notice: The GUI is relatively complete and this project will not be maintained in the future.
+
+This readme is up to version 1.2.5, version 1.3.0 is only available in Chinese.
 
 ## Latest Updates
 
@@ -175,16 +177,6 @@ Note : Most of the above models include only the necessary inference weights, an
 
    A：If the structure of the model and thinking method didn't changed, and the differences between the official and non-official is only the method when processing data, then it seems like to be mostly fine.
 
-2. Q: Is there a command line version or HttpApi?
-
-   A: Considering that CLI and HttpApi are prone to abuse, development has been temporarily postponed. (In version 1.0.0, **[ShiroDoMain](https://github.com/ShiroDoMain)** developed the CLI version, you can get it from the cli branch if you need it)
-
-## Share models&Join the development!
-
-Welcome if you want to share your models! It's not recommend to storage your models here in the Github because they may be very large. You can Pull Request with your own download address.
-
-If you have any suggestions or discovered and bugs, please submit an issue.
-
 ## Credits
 
 1. **[ShiroDoMain](https://github.com/ShiroDoMain)**: Developed the cli for version 1.0.0
@@ -207,3 +199,5 @@ DiffSinger:https://github.com/MoonInTheRiver/DiffSinger
 DiffSinger(openvpi):https://github.com/openvpi/DiffSinger
 
 DiffSinger Community Vocoder Project: https://openvpi.github.io/vocoders/
+
+diff svc(openvpi): https://github.com/openvpi/diff-svc
